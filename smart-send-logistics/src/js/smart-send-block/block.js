@@ -31,22 +31,14 @@ export const Block = ({ checkoutExtensionData, extensions }) => {
     [setExtensionData]
   );
 
-  const validationErrorId = "shipping-workshop-other-value";
+  const validationErrorId = "smart-send-other-value";
 
   const { setValidationErrors, clearValidationError } = useDispatch(
     "wc/store/validation"
   );
   const validationError = useSelect((select) => {
     const store = select("wc/store/validation");
-    /**
-     * [frontend-step-07]
-     * 📝 Write some code to get the validation error from the `wc/store/validation` data store.
-     * Using the `getValidationError` selector on the `store` object, get the validation error.
-     *
-     * The `validationErrorId` variable can be used to get the validation error. Documentation
-     * on the validation data store can be found here:
-     * https://github.com/woocommerce/woocommerce-blocks/blob/trunk/docs/third-party-developers/extensibility/data-store/validation.md
-     */
+  
     return store.getValidationError(validationErrorId);
 
   });
@@ -58,7 +50,6 @@ export const Block = ({ checkoutExtensionData, extensions }) => {
     var carrier = "postnord";
     var street = setValue("shipping-address_1");
     var city = setValue("shipping-city");
-    // var state = document.getElementById( 'shipping-state' ).value;
     var country = setValue("components-form-token-input-0");
     country = countries[country];
     var postcode = setValue("shipping-postcode");
@@ -97,7 +88,7 @@ export const Block = ({ checkoutExtensionData, extensions }) => {
     }
     setValidationErrors({
       [validationErrorId]: {
-        message: __("Please add some text", "shipping-workshop"),
+        message: __("Please add some text", "smart-send"),
         hidden: !hasInteractedWithOtherInput,
       },
     });
@@ -112,11 +103,11 @@ export const Block = ({ checkoutExtensionData, extensions }) => {
   ]);
 
   return (
-    <div className="wp-block-shipping-workshop-not-at-home">
+    <div className="wp-block-smart-send-not-at-home">
       <div className="coountry"></div>
 
       <SelectControl
-        label={__("TLS Delievery Point", "shipping-workshop")}
+        label={__("TLS Delievery Point", "smart-send")}
         value={selectedpickuppoints}
         options={options}
         onChange={setSelectedpickuppoints}

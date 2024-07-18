@@ -80,10 +80,10 @@ const box = (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_prim
 
 /***/ }),
 
-/***/ "./src/js/shipping-workshop-block/edit.js":
-/*!************************************************!*\
-  !*** ./src/js/shipping-workshop-block/edit.js ***!
-  \************************************************/
+/***/ "./src/js/smart-send-block/edit.js":
+/*!*****************************************!*\
+  !*** ./src/js/smart-send-block/edit.js ***!
+  \*****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -101,8 +101,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _woocommerce_settings__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @woocommerce/settings */ "@woocommerce/settings");
 /* harmony import */ var _woocommerce_settings__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_woocommerce_settings__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./style.scss */ "./src/js/shipping-workshop-block/style.scss");
-/* harmony import */ var _options__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./options */ "./src/js/shipping-workshop-block/options.js");
+/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./style.scss */ "./src/js/smart-send-block/style.scss");
+/* harmony import */ var _options__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./options */ "./src/js/smart-send-block/options.js");
 
 /**
  * External dependencies
@@ -119,7 +119,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const {
   defaultShippingText
-} = (0,_woocommerce_settings__WEBPACK_IMPORTED_MODULE_4__.getSetting)('shipping-workshop_data', '');
+} = (0,_woocommerce_settings__WEBPACK_IMPORTED_MODULE_4__.getSetting)('smart-send_data', '');
 const Edit = ({
   attributes,
   setAttributes
@@ -134,9 +134,9 @@ const Edit = ({
       display: 'block'
     }
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.InspectorControls, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.PanelBody, {
-    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Block options', 'shipping-workshop')
+    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Block options', 'smart-send')
   }, "Options for the block go here.")), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.RichText, {
-    value: text || defaultShippingText || (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('If I am not at home, please…', 'shipping-workshop'),
+    value: text || defaultShippingText || (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('If I am not at home, please…', 'smart-send'),
     onChange: value => setAttributes({
       text: value
     })
@@ -159,10 +159,10 @@ const Save = ({
 
 /***/ }),
 
-/***/ "./src/js/shipping-workshop-block/index.js":
-/*!*************************************************!*\
-  !*** ./src/js/shipping-workshop-block/index.js ***!
-  \*************************************************/
+/***/ "./src/js/smart-send-block/index.js":
+/*!******************************************!*\
+  !*** ./src/js/smart-send-block/index.js ***!
+  \******************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -172,8 +172,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/icon/index.js");
 /* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/box.js");
-/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./edit */ "./src/js/shipping-workshop-block/edit.js");
-/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./block.json */ "./src/js/shipping-workshop-block/block.json");
+/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./edit */ "./src/js/smart-send-block/edit.js");
+/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./block.json */ "./src/js/smart-send-block/block.json");
 
 /**
  * External dependencies
@@ -198,10 +198,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/js/shipping-workshop-block/options.js":
-/*!***************************************************!*\
-  !*** ./src/js/shipping-workshop-block/options.js ***!
-  \***************************************************/
+/***/ "./src/js/smart-send-block/options.js":
+/*!********************************************!*\
+  !*** ./src/js/smart-send-block/options.js ***!
+  \********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -227,29 +227,29 @@ const fetchOptions = async () => {
 
     // Map the fetched data to the options format
     const fetchedOptions = data.slice(0, 3).map((item, index) => ({
-      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)(item.title, 'shipping-workshop'),
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)(item.title, 'smart-send'),
       value: `point-${index + 1}`
     }));
 
     // Add the 'Other' option
     fetchedOptions.push({
-      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Other', 'shipping-workshop'),
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Other', 'smart-send'),
       value: 'other'
     });
     return fetchedOptions;
   } catch (error) {
     console.error('Error fetching options:', error);
     return [{
-      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Point One', 'shipping-workshop'),
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Point One', 'smart-send'),
       value: 'point-one'
     }, {
-      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Point Two', 'shipping-workshop'),
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Point Two', 'smart-send'),
       value: 'point-two'
     }, {
-      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Point Three', 'shipping-workshop'),
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Point Three', 'smart-send'),
       value: 'point-three'
     }, {
-      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Other', 'shipping-workshop'),
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Other', 'smart-send'),
       value: 'other'
     }];
   }
@@ -289,10 +289,10 @@ fetchOptions().then(fetchedOptions => {
 
 /***/ }),
 
-/***/ "./src/js/shipping-workshop-block/style.scss":
-/*!***************************************************!*\
-  !*** ./src/js/shipping-workshop-block/style.scss ***!
-  \***************************************************/
+/***/ "./src/js/smart-send-block/style.scss":
+/*!********************************************!*\
+  !*** ./src/js/smart-send-block/style.scss ***!
+  \********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -391,13 +391,13 @@ module.exports = window["wp"]["primitives"];
 
 /***/ }),
 
-/***/ "./src/js/shipping-workshop-block/block.json":
-/*!***************************************************!*\
-  !*** ./src/js/shipping-workshop-block/block.json ***!
-  \***************************************************/
+/***/ "./src/js/smart-send-block/block.json":
+/*!********************************************!*\
+  !*** ./src/js/smart-send-block/block.json ***!
+  \********************************************/
 /***/ ((module) => {
 
-module.exports = /*#__PURE__*/JSON.parse('{"apiVersion":3,"name":"smart-send/pickup-point-block","version":"2.0.0","title":"Smart Send logistics Pickup Points","category":"woocommerce","description":"Show pick-up point selector during checkout for relevant shipping methods","supports":{"html":false,"align":false,"multiple":false,"reusable":false},"parent":["woocommerce/checkout-shipping-methods-block"],"attributes":{"lock":{"type":"object","default":{"remove":true,"move":true}},"text":{"type":"string","default":""}},"textdomain":"smart-send-logistics","editorStyle":"file:../../../build/style-shipping-workshop-block.css"}');
+module.exports = /*#__PURE__*/JSON.parse('{"apiVersion":3,"name":"smart-send/pickup-point-block","version":"2.0.0","title":"Smart Send logistics Pickup Points","category":"woocommerce","description":"Show pick-up point selector during checkout for relevant shipping methods","supports":{"html":false,"align":false,"multiple":false,"reusable":false},"parent":["woocommerce/checkout-shipping-methods-block"],"attributes":{"lock":{"type":"object","default":{"remove":true,"move":true}},"text":{"type":"string","default":""}},"textdomain":"smart-send-logistics","editorStyle":"file:../../../build/style-smart-send-block.css"}');
 
 /***/ })
 
@@ -511,8 +511,8 @@ module.exports = /*#__PURE__*/JSON.parse('{"apiVersion":3,"name":"smart-send/pic
 /******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
 /******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
 /******/ 		var installedChunks = {
-/******/ 			"shipping-workshop-block": 0,
-/******/ 			"./style-shipping-workshop-block": 0
+/******/ 			"smart-send-block": 0,
+/******/ 			"./style-smart-send-block": 0
 /******/ 		};
 /******/ 		
 /******/ 		// no chunk on demand loading
@@ -552,7 +552,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"apiVersion":3,"name":"smart-send/pic
 /******/ 			return __webpack_require__.O(result);
 /******/ 		}
 /******/ 		
-/******/ 		var chunkLoadingGlobal = globalThis["webpackChunkshipping_workshop"] = globalThis["webpackChunkshipping_workshop"] || [];
+/******/ 		var chunkLoadingGlobal = globalThis["webpackChunksmart_send"] = globalThis["webpackChunksmart_send"] || [];
 /******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
 /******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
 /******/ 	})();
@@ -562,9 +562,9 @@ module.exports = /*#__PURE__*/JSON.parse('{"apiVersion":3,"name":"smart-send/pic
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["./style-shipping-workshop-block"], () => (__webpack_require__("./src/js/shipping-workshop-block/index.js")))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["./style-smart-send-block"], () => (__webpack_require__("./src/js/smart-send-block/index.js")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=shipping-workshop-block.js.map
+//# sourceMappingURL=smart-send-block.js.map

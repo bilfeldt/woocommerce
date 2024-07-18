@@ -201,9 +201,9 @@ if (!class_exists('SS_Shipping_WC')) :
              * Include the dependencies needed to instantiate the block.
              */
             add_action('woocommerce_blocks_loaded', function () {
-                require_once __DIR__ . '/shipping-workshop-extend-store-endpoint.php';
-                require_once __DIR__ . '/shipping-workshop-extend-woo-core.php';
-                require_once __DIR__ . '/shipping-workshop-blocks-integration.php';
+                require_once __DIR__ . '/smart-send-extend-store-endpoint.php';
+                require_once __DIR__ . '/smart-send-extend-woo-core.php';
+                require_once __DIR__ . '/smart-send-blocks-integration.php';
         
                 // Initialize our store endpoint extension when WC Blocks is loaded.
                 Shipping_Workshop_Extend_Store_Endpoint::init();
@@ -269,8 +269,8 @@ if (!class_exists('SS_Shipping_WC')) :
                 $categories,
                 [
                     [
-                        'slug'  => 'shipping-workshop',
-                        'title' => __('Shipping_Workshop Blocks', 'shipping-workshop'),
+                        'slug'  => 'smart-send',
+                        'title' => __('Shipping_Workshop Blocks', 'smart-send'),
                     ],
                 ]
             );

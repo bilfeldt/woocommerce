@@ -16,7 +16,7 @@ import { getSetting } from '@woocommerce/settings';
 import './style.scss';
 import { options } from './options';
 
-const { defaultShippingText } = getSetting( 'shipping-workshop_data', '' );
+const { defaultShippingText } = getSetting( 'smart-send_data', '' );
 
 export const Edit = ( { attributes, setAttributes } ) => {
 	const { text } = attributes;
@@ -24,7 +24,7 @@ export const Edit = ( { attributes, setAttributes } ) => {
 	return (
 		<div { ...blockProps } style={ { display: 'block' } }>
 			<InspectorControls>
-				<PanelBody title={ __( 'Block options', 'shipping-workshop' ) }>
+				<PanelBody title={ __( 'Block options', 'smart-send' ) }>
 					Options for the block go here.
 				</PanelBody>
 			</InspectorControls>
@@ -35,7 +35,7 @@ export const Edit = ( { attributes, setAttributes } ) => {
 						defaultShippingText ||
 						__(
 							'If I am not at home, please…',
-							'shipping-workshop'
+							'smart-send'
 						)
 					}
 					onChange={ ( value ) => setAttributes( { text: value } ) }

@@ -1,0 +1,1 @@
+{"version":3,"file":"./style-smart-send-block.css","mappings":";;;AAAA;EACC;AACD;;AACA;EACC;EACA;AAED,C","sources":["webpack://smart-send/./src/js/smart-send-block/style.scss"],"sourcesContent":[".smart-send-other-value input {\n\twidth: 100%;\n}\n.shiiping_smart_ar_hide{\n\tdisplay: none;\n\topacity: 0;\n}"],"names":[],"sourceRoot":""}

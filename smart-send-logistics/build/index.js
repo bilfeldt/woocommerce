@@ -92,7 +92,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 const render = () => {};
-(0,_wordpress_plugins__WEBPACK_IMPORTED_MODULE_0__.registerPlugin)('shipping-workshop', {
+(0,_wordpress_plugins__WEBPACK_IMPORTED_MODULE_0__.registerPlugin)('smart-send', {
   render,
   scope: 'woocommerce-checkout'
 });

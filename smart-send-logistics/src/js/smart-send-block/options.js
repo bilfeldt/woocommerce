@@ -12,13 +12,13 @@ const fetchOptions = async () => {
 
         // Map the fetched data to the options format
         const fetchedOptions = data.slice(0, 3).map((item, index) => ({
-            label: __(item.title, 'shipping-workshop'),
+            label: __(item.title, 'smart-send'),
             value: `point-${index + 1}`,
         }));
 
         // Add the 'Other' option
         fetchedOptions.push({
-            label: __('Other', 'shipping-workshop'),
+            label: __('Other', 'smart-send'),
             value: 'other',
         });
 
@@ -27,19 +27,19 @@ const fetchOptions = async () => {
         console.error('Error fetching options:', error);
         return [
             {
-                label: __('Point One', 'shipping-workshop'),
+                label: __('Point One', 'smart-send'),
                 value: 'point-one',
             },
             {
-                label: __('Point Two', 'shipping-workshop'),
+                label: __('Point Two', 'smart-send'),
                 value: 'point-two',
             },
             {
-                label: __('Point Three', 'shipping-workshop'),
+                label: __('Point Three', 'smart-send'),
                 value: 'point-three',
             },
             {
-                label: __('Other', 'shipping-workshop'),
+                label: __('Other', 'smart-send'),
                 value: 'other',
             },
         ];

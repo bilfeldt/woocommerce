@@ -28,5 +28,5 @@
     }
   },
   "textdomain": "smart-send-logistics",
-  "editorStyle": "file:../../../build/style-shipping-workshop-block.css"
+  "editorStyle": "file:../../../build/style-smart-send-block.css"
 }

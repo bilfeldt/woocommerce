@@ -5,7 +5,7 @@ import { registerPlugin } from '@wordpress/plugins';
 
 const render = () => {};
 
-registerPlugin( 'shipping-workshop', {
+registerPlugin( 'smart-send', {
 	render,
 	scope: 'woocommerce-checkout',
 } );
