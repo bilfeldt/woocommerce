@@ -4,9 +4,9 @@ use Automattic\WooCommerce\Blocks\StoreApi\Schemas\CartSchema;
 use Automattic\WooCommerce\Blocks\StoreApi\Schemas\CheckoutSchema;
 
 /**
- * Shipping Workshop Extend Store API.
+ *  Extend Store API.
  */
-class Shipping_Workshop_Extend_Store_Endpoint {
+class smart_send_Extend_Store_Endpoint {
 	/**
 	 * Stores Rest Extending instance.
 	 *
@@ -39,7 +39,7 @@ class Shipping_Workshop_Extend_Store_Endpoint {
 				[
 					'endpoint'        => CheckoutSchema::IDENTIFIER,
 					'namespace'       => self::IDENTIFIER,
-					'schema_callback' => [ 'Shipping_Workshop_Extend_Store_Endpoint', 'extend_checkout_schema' ],
+					'schema_callback' => [ 'smart_send_Extend_Store_Endpoint', 'extend_checkout_schema' ],
 					'schema_type'     => ARRAY_A,
 				]
 			);
@@ -48,7 +48,7 @@ class Shipping_Workshop_Extend_Store_Endpoint {
 
 
 	/**
-	 * Register shipping workshop schema into the Checkout endpoint.
+	 * Register  schema into the Checkout endpoint.
 	 *
 	 * @return array Registered schema.
 	 */

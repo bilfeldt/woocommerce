@@ -206,21 +206,21 @@ if (!class_exists('SS_Shipping_WC')) :
                 require_once __DIR__ . '/smart-send-blocks-integration.php';
         
                 // Initialize our store endpoint extension when WC Blocks is loaded.
-                Shipping_Workshop_Extend_Store_Endpoint::init();
+                smart_send_Extend_Store_Endpoint::init();
         
                 // Add hooks relevant to extending the Woo core experience.
-                $extend_core = new Shipping_Workshop_Extend_Woo_Core();
+                $extend_core = new smart_send_Extend_Woo_Core();
                 $extend_core->init();                add_action(
                     'woocommerce_blocks_checkout_block_registration',
                     function ($integration_registry) {
-                        $integration_registry->register(new Shipping_Workshop_Blocks_Integration());
+                        $integration_registry->register(new smart_send_Blocks_Integration());
                     }
                 );
             });
 
             // Define smart_send_logistics block version.
             $plugin_data = get_file_data(__FILE__, array('version' => 'version'));
-            define('SHIPPING_WORKSHOP_VERSION', $plugin_data['version']);
+            define('smart_send_VERSION', $plugin_data['version']);
 
 
             add_action( 'before_woocommerce_init', function() {
@@ -231,7 +231,7 @@ if (!class_exists('SS_Shipping_WC')) :
             /**
              * Registers the slug as a block category with WordPress.
              */
-            add_action('block_categories_all', array($this, 'register_Shipping_Workshop_block_category'), 10, 2);
+            add_action('block_categories_all', array($this, 'register_smart_send_block_category'), 10, 2);
         }
 
 
@@ -263,14 +263,14 @@ if (!class_exists('SS_Shipping_WC')) :
         /**
          * Registers the slug as a block category with WordPress.
          */
-        public   function register_Shipping_Workshop_block_category($categories)
+        public   function register_smart_send_block_category($categories)
         {
             return array_merge(
                 $categories,
                 [
                     [
                         'slug'  => 'smart-send',
-                        'title' => __('Shipping_Workshop Blocks', 'smart-send'),
+                        'title' => __('smart_send Blocks', 'smart-send'),
                     ],
                 ]
             );

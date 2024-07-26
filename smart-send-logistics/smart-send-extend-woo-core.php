@@ -9,10 +9,10 @@ use WooCommerce\Classes\WC_Order;
 include __DIR__ . '/includes/class-ss-shipping-wc-order.php';
 
 /**
- * Shipping Workshop Extend WC Core.
+ *  Extend WC Core.
  */
 
-class Shipping_Workshop_Extend_Woo_Core
+class smart_send_Extend_Woo_Core
 {
 
 	/**
@@ -35,7 +35,7 @@ class Shipping_Workshop_Extend_Woo_Core
 
 
 	/**
-	 * Register shipping workshop schema into the Checkout endpoint.
+	 * Register  schema into the Checkout endpoint.
 	 *
 	 * @return array Registered schema.
 	 */
@@ -68,19 +68,19 @@ class Shipping_Workshop_Extend_Woo_Core
 		add_action(
 			'woocommerce_store_api_checkout_update_order_from_request',
 			function (\WC_Order $order, \WP_REST_Request $request) {
-				$shipping_workshop_request_data = $request['extensions'][$this->name];
+				$smart_send_request_data = $request['extensions'][$this->name];
 
-				$alternate_shipping_instruction = $shipping_workshop_request_data['selectedpickuppoints'];
-				$other_shipping_value           = $shipping_workshop_request_data['otherShippingValue'];
+				$alternate_shipping_instruction = $smart_send_request_data['selectedpickuppoints'];
+				$other_shipping_value           = $smart_send_request_data['otherShippingValue'];
 
 
 				$alternate_shipping_instructionarr = explode('?', $alternate_shipping_instruction);
-				$order->update_meta_data('shipping_workshop_alternate_shipping_instruction', $alternate_shipping_instructionarr[1]);
+				$order->update_meta_data('smart_send_alternate_shipping_instruction', $alternate_shipping_instructionarr[1]);
 
 				$order->update_meta_data('ss_shipping_order_agent_no', $alternate_shipping_instructionarr[0]);
 
 				if ('other' === $alternate_shipping_instruction) {
-					$order->update_meta_data('shipping_workshop_alternate_shipping_instruction_other_text', $other_shipping_value);
+					$order->update_meta_data('smart_send_alternate_shipping_instruction_other_text', $other_shipping_value);
 				}
 				session_start();
 				if (!isset($_SESSION['initialized'])) {
@@ -123,10 +123,10 @@ class Shipping_Workshop_Extend_Woo_Core
 		add_action(
 			'woocommerce_admin_order_data_after_shipping_address',
 			function (\WC_Order $order) {
-				$alternate_shipping_instruction = $order->get_meta('shipping_workshop_alternate_shipping_instruction');
+				$alternate_shipping_instruction = $order->get_meta('smart_send_alternate_shipping_instruction');
 
 				$ss_shipping_order_agent_no = $order->get_meta('ss_shipping_order_agent_no');
-				$alternate_shipping_instruction_other_text = $order->get_meta('shipping_workshop_alternate_shipping_instruction_other_text');
+				$alternate_shipping_instruction_other_text = $order->get_meta('smart_send_alternate_shipping_instruction_other_text');
 
 				// $country=$order->data;
 
@@ -151,14 +151,14 @@ class Shipping_Workshop_Extend_Woo_Core
 			'woocommerce_thankyou',
 			function (int $order_id) {
 				$order = wc_get_order($order_id);
-				$shipping_workshop_alternate_shipping_instruction            = $order->get_meta('shipping_workshop_alternate_shipping_instruction');
-				$shipping_workshop_alternate_shipping_instruction_other_text = $order->get_meta('shipping_workshop_alternate_shipping_instruction_other_text');
+				$smart_send_alternate_shipping_instruction            = $order->get_meta('smart_send_alternate_shipping_instruction');
+				$smart_send_alternate_shipping_instruction_other_text = $order->get_meta('smart_send_alternate_shipping_instruction_other_text');
 				$ss_shipping_order_agent_no = $order->get_meta('ss_shipping_order_agent_no');
 
-				if ('' !== $shipping_workshop_alternate_shipping_instruction) {
+				if ('' !== $smart_send_alternate_shipping_instruction) {
 
-					if ('' !== $shipping_workshop_alternate_shipping_instruction_other_text) {
-						echo '<p>' . esc_html($shipping_workshop_alternate_shipping_instruction_other_text) . '</p>';
+					if ('' !== $smart_send_alternate_shipping_instruction_other_text) {
+						echo '<p>' . esc_html($smart_send_alternate_shipping_instruction_other_text) . '</p>';
 					}
 				}
 			}
@@ -173,14 +173,14 @@ class Shipping_Workshop_Extend_Woo_Core
 		add_action(
 			'woocommerce_email_after_order_table',
 			function ($order, $sent_to_admin, $plain_text, $email) {
-				$shipping_workshop_alternate_shipping_instruction            = $order->get_meta('shipping_workshop_alternate_shipping_instruction');
-				$shipping_workshop_alternate_shipping_instruction_other_text = $order->get_meta('shipping_workshop_alternate_shipping_instruction_other_text');
+				$smart_send_alternate_shipping_instruction            = $order->get_meta('smart_send_alternate_shipping_instruction');
+				$smart_send_alternate_shipping_instruction_other_text = $order->get_meta('smart_send_alternate_shipping_instruction_other_text');
 				$ss_shipping_order_agent_no = $order->get_meta('ss_shipping_order_agent_no');
 
-				if ('' !== $shipping_workshop_alternate_shipping_instruction) {
+				if ('' !== $smart_send_alternate_shipping_instruction) {
 
-					if ('' !== $shipping_workshop_alternate_shipping_instruction_other_text) {
-						echo '<p>' . esc_html($shipping_workshop_alternate_shipping_instruction_other_text) . '</p>';
+					if ('' !== $smart_send_alternate_shipping_instruction_other_text) {
+						echo '<p>' . esc_html($smart_send_alternate_shipping_instruction_other_text) . '</p>';
 					}
 				}
 			},

@@ -4,7 +4,7 @@ use Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface;
 /**
  * Class for integrating with WooCommerce Blocks
  */
-    class Shipping_Workshop_Blocks_Integration implements IntegrationInterface {
+    class smart_send_Blocks_Integration implements IntegrationInterface {
 
 	/**
 	 * The name of the integration.
@@ -20,9 +20,9 @@ use Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface;
 	 */
 	public function initialize() {
 		require_once __DIR__ . '/smart-send-extend-store-endpoint.php';
-		$this->register_shipping_workshop_block_frontend_scripts();
-		$this->register_shipping_workshop_block_editor_scripts();
-		$this->register_shipping_workshop_block_editor_styles();
+		$this->register_smart_send_block_frontend_scripts();
+		$this->register_smart_send_block_editor_scripts();
+		$this->register_smart_send_block_editor_styles();
 		$this->register_main_integration();
 		$this->extend_store_api();
 		$this->save_shipping_instructions();
@@ -34,7 +34,7 @@ use Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface;
 	 * Extends the cart schema to include the smart-send value.
 	 */
 	private function extend_store_api() {
-		Shipping_Workshop_Extend_Store_Endpoint::init();
+		smart_send_Extend_Store_Endpoint::init();
 	}
 
     private function save_shipping_instructions() {
@@ -42,12 +42,12 @@ use Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface;
         add_action(
             'woocommerce_store_api_checkout_update_order_from_request',
             function( \WC_Order $order, \WP_REST_Request $request ) {
-                $shipping_workshop_request_data = $request['extensions'][$this->get_name()];
+                $smart_send_request_data = $request['extensions'][$this->get_name()];
               
-				$alternate_shipping_instruction = $shipping_workshop_request_data['selectedpickuppoints'];
+				$alternate_shipping_instruction = $smart_send_request_data['selectedpickuppoints'];
 			
 
-				 $order->update_meta_data( 'shipping_workshop_alternate_shipping_instruction', $alternate_shipping_instruction );
+				 $order->update_meta_data( 'smart_send_alternate_shipping_instruction', $alternate_shipping_instruction );
 				 $order->update_meta_data('ss_shipping_order_agent_no', $alternate_shipping_instruction);
 				
 			
@@ -67,13 +67,13 @@ use Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface;
             'woocommerce_admin_order_data_after_shipping_address',
             function( \WC_Order $order ) {
                
-                  $shipping_workshop_alternate_shipping_instruction= $order->get_meta('shipping_workshop_alternate_shipping_instruction');
+                  $smart_send_alternate_shipping_instruction= $order->get_meta('smart_send_alternate_shipping_instruction');
              
 
 				echo '<div>';
                 echo '<strong>' . __( 'Shipping Instructions', 'smart-send' ) . '</strong>';
                 
-                 echo '<p>'.$shipping_workshop_alternate_shipping_instruction.'</p>';
+                 echo '<p>'.$smart_send_alternate_shipping_instruction.'</p>';
 				
                 echo '</div>';
             }
@@ -155,7 +155,7 @@ use Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface;
 
 	}
 
-	public function register_shipping_workshop_block_editor_styles() {
+	public function register_smart_send_block_editor_styles() {
 		$style_path = '/build/style-smart-send-block.css';
 
 		$style_url = plugins_url( $style_path, __FILE__ );
@@ -167,7 +167,7 @@ use Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface;
 		);
 	}
 
-	public function register_shipping_workshop_block_editor_scripts() {
+	public function register_smart_send_block_editor_scripts() {
 		$script_path       = '/build/smart-send-block.js';
 		$script_url        = plugins_url( $script_path, __FILE__ );
 		$script_asset_path = dirname( __FILE__ ) . '/build/smart-send-block.asset.php';
@@ -193,7 +193,7 @@ use Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface;
 		);
 	}
 
-	public function register_shipping_workshop_block_frontend_scripts() {
+	public function register_smart_send_block_frontend_scripts() {
 		$script_path       = '/build/smart-send-block-frontend.js';
 		$script_url        = plugins_url( $script_path, __FILE__ );
 		$script_asset_path = dirname( __FILE__ ) . '/build/smart-send-block-frontend.asset.php';
@@ -228,6 +228,6 @@ use Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface;
 		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG && file_exists( $file ) ) {
 			return filemtime( $file );
 		}
-		return SHIPPING_WORKSHOP_VERSION;
+		return smart_send_VERSION;
 	}
 }

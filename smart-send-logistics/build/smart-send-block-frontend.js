@@ -67,15 +67,6 @@ const Block = ({
   } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_4__.useDispatch)("wc/store/validation");
   const validationError = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_4__.useSelect)(select => {
     const store = select("wc/store/validation");
-    /**
-     * [frontend-step-07]
-     * 📝 Write some code to get the validation error from the `wc/store/validation` data store.
-     * Using the `getValidationError` selector on the `store` object, get the validation error.
-     *
-     * The `validationErrorId` variable can be used to get the validation error. Documentation
-     * on the validation data store can be found here:
-     * https://github.com/woocommerce/woocommerce-blocks/blob/trunk/docs/third-party-developers/extensibility/data-store/validation.md
-     */
     return store.getValidationError(validationErrorId);
   });
   const [selectedpickuppoints, setSelectedpickuppoints] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("try-again");
@@ -83,7 +74,6 @@ const Block = ({
     var carrier = "postnord";
     var street = setValue("shipping-address_1");
     var city = setValue("shipping-city");
-    // var state = document.getElementById( 'shipping-state' ).value;
     var country = setValue("components-form-token-input-0");
     country = _countries__WEBPACK_IMPORTED_MODULE_7__.countries[country];
     var postcode = setValue("shipping-postcode");
