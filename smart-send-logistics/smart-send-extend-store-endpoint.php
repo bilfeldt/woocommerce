@@ -1,12 +1,11 @@
 <?php
-use Automattic\WooCommerce\Blocks\Package;
-use Automattic\WooCommerce\Blocks\StoreApi\Schemas\CartSchema;
+
 use Automattic\WooCommerce\Blocks\StoreApi\Schemas\CheckoutSchema;
 
 /**
  *  Extend Store API.
  */
-class smart_send_Extend_Store_Endpoint {
+class Smart_Send_Extend_Store_Endpoint {
 	/**
 	 * Stores Rest Extending instance.
 	 *
@@ -39,7 +38,7 @@ class smart_send_Extend_Store_Endpoint {
 				[
 					'endpoint'        => CheckoutSchema::IDENTIFIER,
 					'namespace'       => self::IDENTIFIER,
-					'schema_callback' => [ 'smart_send_Extend_Store_Endpoint', 'extend_checkout_schema' ],
+					'schema_callback' => [ 'Smart_Send_Extend_Store_Endpoint', 'extend_checkout_schema' ],
 					'schema_type'     => ARRAY_A,
 				]
 			);
@@ -56,7 +55,7 @@ class smart_send_Extend_Store_Endpoint {
 
 		return [
 			'selectedpickuppoints' => [
-				'description' => 'Alternative shipping instructions for the courier',
+				'description' => 'Alternative Shipping Pickup Points',
 				'type'        => 'string',
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,

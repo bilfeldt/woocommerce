@@ -52,11 +52,6 @@ const Block = ({
   const {
     setExtensionData
   } = checkoutExtensionData;
-  /**
-   * Debounce the setExtensionData function to avoid multiple calls to the API when rapidly
-   * changing options.
-   */
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSetExtensionData = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useCallback)((0,lodash__WEBPACK_IMPORTED_MODULE_5__.debounce)((namespace, key, value) => {
     setExtensionData(namespace, key, value);
   }, 1000), [setExtensionData]);
@@ -96,17 +91,15 @@ const Block = ({
     }
     setValidationErrors({
       [validationErrorId]: {
-        message: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Please add some text", "smart-send"),
+        message: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Please add some text", "smart-send-logistics"),
         hidden: !hasInteractedWithOtherInput
       }
     });
   }, [clearValidationError, setSelectedpickuppoints, setValidationErrors, validationErrorId, debouncedSetExtensionData, validationError]);
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "wp-block-smart-send-not-at-home"
-  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: "coountry"
-  }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.SelectControl, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("TLS Delievery Point", "smart-send"),
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.SelectControl, {
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("TLS Delivery Point", "smart-send-logistics"),
     value: selectedpickuppoints,
     options: _options__WEBPACK_IMPORTED_MODULE_6__.options,
     onChange: setSelectedpickuppoints,
@@ -153,8 +146,8 @@ const getPickupPoints = async (meta_data, country, postalCode, city, street) => 
       jQuery(".shiiping_smart_ar_hide").hide();
       jQuery(".shiiping_smart_ar_hide").css("opacity", 0);
     } else {
-      const resultz = await response.json();
-      const sortedData = Object.entries(resultz).sort((a, b) => {
+      const results = await response.json();
+      const sortedData = Object.entries(results).sort((a, b) => {
         const distanceA = a[0] === "0" ? 0 : parseFloat(a[1].split(":")[0].replace("km", "").replace("m", "")) * (a[1].includes("km") ? 1000 : 1);
         const distanceB = b[0] === "0" ? 0 : parseFloat(b[1].split(":")[0].replace("km", "").replace("m", "")) * (b[1].includes("km") ? 1000 : 1);
         return distanceB - distanceA;
@@ -165,14 +158,14 @@ const getPickupPoints = async (meta_data, country, postalCode, city, street) => 
         output += '<option value="' + value[0] + '">' + value[1] + "</option>";
       });
       jQuery(".shiiping_smart_ar_hide").find("select").html(output);
-      gettheselectedmethod();
+      getSelectedShippingMethod();
     }
   } catch (error) {
     console.log(error);
     alert("Failed to fetch pick-up points");
   }
 };
-function gettheselectedmethod() {
+function getSelectedShippingMethod() {
   var selected = jQuery(".wc-block-components-shipping-rates-control").find("input[type=radio]:checked").val();
   if (selected.indexOf("smart_send") !== -1) {
     jQuery(".shiiping_smart_ar_hide").show();
@@ -461,82 +454,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_2__);
 /**
  * External dependencies
  */
 
-
-
-const fetchOptions = async () => {
-  try {
-    const response = await fetch('https://jsonplaceholder.typicode.com/posts');
-    const data = await response.json();
-
-    // Map the fetched data to the options format
-    const fetchedOptions = data.slice(0, 3).map((item, index) => ({
-      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)(item.title, 'smart-send'),
-      value: `point-${index + 1}`
-    }));
-
-    // Add the 'Other' option
-    fetchedOptions.push({
-      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Other', 'smart-send'),
-      value: 'other'
-    });
-    return fetchedOptions;
-  } catch (error) {
-    console.error('Error fetching options:', error);
-    return [{
-      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Point One', 'smart-send'),
-      value: 'point-one'
-    }, {
-      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Point Two', 'smart-send'),
-      value: 'point-two'
-    }, {
-      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Point Three', 'smart-send'),
-      value: 'point-three'
-    }, {
-      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Other', 'smart-send'),
-      value: 'other'
-    }];
-  }
-};
-const ShippingOptionsUpdater = () => {
-  const {
-    shippingAddress
-  } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.useSelect)(select => {
-    const {
-      getShippingAddress
-    } = select('wc/store');
-    return {
-      shippingAddress: getShippingAddress()
-    };
-  }, []);
-  const [options, setOptions] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)([]);
-  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
-    const updateOptions = async () => {
-      const fetchedOptions = await fetchOptions();
-      setOptions(fetchedOptions);
-    };
-    if (shippingAddress) {
-      updateOptions();
-    }
-  }, [shippingAddress]);
-  return null;
-};
-
-// export default ShippingOptionsUpdater;
-
-let options = [];
-
-// Initialize options when the component mounts
-fetchOptions().then(fetchedOptions => {
-  options = fetchedOptions;
-});
+const options = [{
+  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Select pickup point', 'smart-send-logistics'),
+  value: 'select-pickup-point'
+}];
 
 /***/ }),
 

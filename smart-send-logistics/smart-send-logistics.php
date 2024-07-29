@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Name: Smart Send Shipping for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/smart-send-logistics/
@@ -204,30 +205,31 @@ if (!class_exists('SS_Shipping_WC')) :
                 require_once __DIR__ . '/smart-send-extend-store-endpoint.php';
                 require_once __DIR__ . '/smart-send-extend-woo-core.php';
                 require_once __DIR__ . '/smart-send-blocks-integration.php';
-        
+
                 // Initialize our store endpoint extension when WC Blocks is loaded.
-                smart_send_Extend_Store_Endpoint::init();
-        
+                Smart_Send_Extend_Store_Endpoint::init();
+
                 // Add hooks relevant to extending the Woo core experience.
-                $extend_core = new smart_send_Extend_Woo_Core();
-                $extend_core->init();                add_action(
+                $extend_core = new Smart_Send_Extend_Woo_Core();
+                $extend_core->init();
+                add_action(
                     'woocommerce_blocks_checkout_block_registration',
                     function ($integration_registry) {
-                        $integration_registry->register(new smart_send_Blocks_Integration());
+                        $integration_registry->register(new Smart_Send_Blocks_Integration());
                     }
                 );
             });
 
             // Define smart_send_logistics block version.
             $plugin_data = get_file_data(__FILE__, array('version' => 'version'));
-            define('smart_send_VERSION', $plugin_data['version']);
+            define('SMART_SEND_VERSION', $plugin_data['version']);
 
 
-            add_action( 'before_woocommerce_init', function() {
-                if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
-                    \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', __FILE__, true );
+            add_action('before_woocommerce_init', function () {
+                if (class_exists('\Automattic\WooCommerce\Utilities\FeaturesUtil')) {
+                    \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('cart_checkout_blocks', __FILE__, true);
                 }
-            } );
+            });
             /**
              * Registers the slug as a block category with WordPress.
              */
@@ -269,8 +271,8 @@ if (!class_exists('SS_Shipping_WC')) :
                 $categories,
                 [
                     [
-                        'slug'  => 'smart-send',
-                        'title' => __('smart_send Blocks', 'smart-send'),
+                        'slug'  => 'smart-send-logistics',
+                        'title' => __('Smart_Send Blocks', 'smart-send-logistics'),
                     ],
                 ]
             );

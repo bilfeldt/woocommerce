@@ -134,9 +134,9 @@ const Edit = ({
       display: 'block'
     }
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.InspectorControls, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.PanelBody, {
-    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Block options', 'smart-send')
+    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Block options', 'smart-send-logistics')
   }, "Options for the block go here.")), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.RichText, {
-    value: text || defaultShippingText || (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('If I am not at home, please…', 'smart-send'),
+    value: text || defaultShippingText || (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('If I am not at home, please…', 'smart-send-logistics'),
     onChange: value => setAttributes({
       text: value
     })
@@ -210,82 +210,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_2__);
 /**
  * External dependencies
  */
 
-
-
-const fetchOptions = async () => {
-  try {
-    const response = await fetch('https://jsonplaceholder.typicode.com/posts');
-    const data = await response.json();
-
-    // Map the fetched data to the options format
-    const fetchedOptions = data.slice(0, 3).map((item, index) => ({
-      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)(item.title, 'smart-send'),
-      value: `point-${index + 1}`
-    }));
-
-    // Add the 'Other' option
-    fetchedOptions.push({
-      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Other', 'smart-send'),
-      value: 'other'
-    });
-    return fetchedOptions;
-  } catch (error) {
-    console.error('Error fetching options:', error);
-    return [{
-      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Point One', 'smart-send'),
-      value: 'point-one'
-    }, {
-      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Point Two', 'smart-send'),
-      value: 'point-two'
-    }, {
-      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Point Three', 'smart-send'),
-      value: 'point-three'
-    }, {
-      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Other', 'smart-send'),
-      value: 'other'
-    }];
-  }
-};
-const ShippingOptionsUpdater = () => {
-  const {
-    shippingAddress
-  } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.useSelect)(select => {
-    const {
-      getShippingAddress
-    } = select('wc/store');
-    return {
-      shippingAddress: getShippingAddress()
-    };
-  }, []);
-  const [options, setOptions] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)([]);
-  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
-    const updateOptions = async () => {
-      const fetchedOptions = await fetchOptions();
-      setOptions(fetchedOptions);
-    };
-    if (shippingAddress) {
-      updateOptions();
-    }
-  }, [shippingAddress]);
-  return null;
-};
-
-// export default ShippingOptionsUpdater;
-
-let options = [];
-
-// Initialize options when the component mounts
-fetchOptions().then(fetchedOptions => {
-  options = fetchedOptions;
-});
+const options = [{
+  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Select pickup point', 'smart-send-logistics'),
+  value: 'select-pickup-point'
+}];
 
 /***/ }),
 
@@ -348,16 +280,6 @@ module.exports = window["wp"]["blocks"];
 /***/ ((module) => {
 
 module.exports = window["wp"]["components"];
-
-/***/ }),
-
-/***/ "@wordpress/data":
-/*!******************************!*\
-  !*** external ["wp","data"] ***!
-  \******************************/
-/***/ ((module) => {
-
-module.exports = window["wp"]["data"];
 
 /***/ }),
 
@@ -552,7 +474,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"apiVersion":3,"name":"smart-send/pic
 /******/ 			return __webpack_require__.O(result);
 /******/ 		}
 /******/ 		
-/******/ 		var chunkLoadingGlobal = globalThis["webpackChunksmart_send"] = globalThis["webpackChunksmart_send"] || [];
+/******/ 		var chunkLoadingGlobal = globalThis["webpackChunksmart_send_logistics"] = globalThis["webpackChunksmart_send_logistics"] || [];
 /******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
 /******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
 /******/ 	})();
