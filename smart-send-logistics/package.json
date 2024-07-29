@@ -1,7 +1,7 @@
 {
 	"name": "smart-send-logistics",
-	"version": "1.0.0",
-	"author": "The WordPress Contributors",
+	"version": "8.1.1",
+	"author": "Smart Send ApS",
 	"license": "GPL-2.0-or-later",
 	"main": "build/index.js",
 	"scripts": {

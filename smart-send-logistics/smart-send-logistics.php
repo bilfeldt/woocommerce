@@ -65,6 +65,8 @@ if (!class_exists('SS_Shipping_WC')) :
          */
         protected $ss_shipping_frontend = null;
 
+
+
         /**
          * Smart Send Shipping Order for label and tracking.
          *
@@ -242,7 +244,6 @@ if (!class_exists('SS_Shipping_WC')) :
          */
         public function init()
         {
-
             // Checks if WooCommerce 2.6 is installed.
             if (defined('WOOCOMMERCE_VERSION') && version_compare(WOOCOMMERCE_VERSION, '2.6', '>=')) {
                 $this->ss_shipping_frontend = new SS_Shipping_Frontend();

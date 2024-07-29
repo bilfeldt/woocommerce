@@ -1,9 +1,9 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "smart-send/pick-up-points",
+	"name": "smart-send/logistics",
 	"version": "1.0.0",
-	"title": "Pick-up Point checkout",
+	"title": "Checkout pick-up selector",
 	"description": "Show pick-up point selector during checkout for relevant shipping methods",
 	"category": "widgets",
 	"icon": "list-view",
