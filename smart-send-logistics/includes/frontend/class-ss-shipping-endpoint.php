@@ -17,6 +17,7 @@ class SS_Shipping_Endpoint
 
     public function register_endpoints()
     {
+        // register the api end-point
         register_rest_route('smart-send-logistics/v1', '/get-closest-pickup-points', array(
             'methods' => 'POST',
             'callback' => array($this, 'get_pickup_points_callback'),
@@ -33,9 +34,9 @@ class SS_Shipping_Endpoint
         $meta_data = wc_clean($request->get_param('meta_data'));
 
         $carrier = 'gls';
-        $restapiend = 'yes';
+        $is_rest_api = 'yes';
 
-        $ss_agents = $this->frontend->find_closest_agents_by_address($carrier, $country, $postal_code, $city, $street, $restapiend);
+        $ss_agents = $this->frontend->find_closest_agents_by_address($carrier, $country, $postal_code, $city, $street, $is_rest_api);
         if (!empty($ss_agents)) {
             $ss_agent_options = array();
             $ss_setting = SS_SHIPPING_WC()->get_ss_shipping_settings();

@@ -165,6 +165,7 @@ if (!class_exists('SS_Shipping_WC')) :
 
             // Path related defines
             $this->define('SS_SHIPPING_PLUGIN_FILE', __FILE__);
+            $this->define('SS_SHIPPING_WOO_BLOCK_NAME', 'smart-send-logistics');
             $this->define('SS_SHIPPING_PLUGIN_BASENAME', plugin_basename(__FILE__));
             $this->define('SS_SHIPPING_PLUGIN_DIR_PATH', untrailingslashit(plugin_dir_path(__FILE__)));
             $this->define('SS_SHIPPING_PLUGIN_DIR_URL', untrailingslashit(plugins_url('/', __FILE__)));

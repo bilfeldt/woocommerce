@@ -96,8 +96,8 @@ if (!class_exists('SS_Shipping_Frontend')) :
                     echo '<div class="woocommerce-info ss-carrier-info">' . __('Carrier: ', 'smart-send-logistics') . $carrier . '</div>';
 
                     $this->carries = $carrier;
-                    $restapiend = '';
-                    $ss_agents = $this->find_closest_agents_by_address($carrier, $country, $postal_code, $city, $street, $restapiend);
+                    $is_rest_api = '';
+                    $ss_agents = $this->find_closest_agents_by_address($carrier, $country, $postal_code, $city, $street, $is_rest_api);
 
                     if (!empty($ss_agents)) {
                         $ss_setting = SS_SHIPPING_WC()->get_ss_shipping_settings();
@@ -129,7 +129,7 @@ if (!class_exists('SS_Shipping_Frontend')) :
         /**
          * Get shipping method meta data
          */
-        public  function get_shipping_method_meta_data($shipping_method_name)
+        public  function get_shipping_method_meta($shipping_method_name)
         {
             // Get all shipping zones
             $zones = WC_Shipping_Zones::get_zones();

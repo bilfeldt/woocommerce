@@ -64,7 +64,7 @@ const Block = ({
     const store = select("wc/store/validation");
     return store.getValidationError(validationErrorId);
   });
-  const [selectedpickuppoints, setSelectedpickuppoints] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("try-again");
+  const [selectedPickupPoints, setselectedPickupPoints] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("try-again");
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
     var carrier = "postnord";
     var street = setValue("shipping-address_1");
@@ -79,11 +79,11 @@ const Block = ({
     }
   }, [isCalculating]);
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
-    setExtensionData("smart-send-logistics", "selectedpickuppoints", selectedpickuppoints);
-  }, [setExtensionData, selectedpickuppoints]);
+    setExtensionData("smart-send-logistics", "selectedPickupPoints", selectedPickupPoints);
+  }, [setExtensionData, selectedPickupPoints]);
   const [hasInteractedWithOtherInput, setHasInteractedWithOtherInput] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
-    if (setSelectedpickuppoints !== "other") {
+    if (setselectedPickupPoints !== "other") {
       if (validationError) {
         clearValidationError(validationErrorId);
       }
@@ -95,14 +95,14 @@ const Block = ({
         hidden: !hasInteractedWithOtherInput
       }
     });
-  }, [clearValidationError, setSelectedpickuppoints, setValidationErrors, validationErrorId, debouncedSetExtensionData, validationError]);
+  }, [clearValidationError, setselectedPickupPoints, setValidationErrors, validationErrorId, debouncedSetExtensionData, validationError]);
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "wp-block-smart-send-not-at-home"
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.SelectControl, {
     label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("TLS Delivery Point", "smart-send-logistics"),
-    value: selectedpickuppoints,
+    value: selectedPickupPoints,
     options: _options__WEBPACK_IMPORTED_MODULE_6__.options,
-    onChange: setSelectedpickuppoints,
+    onChange: setselectedPickupPoints,
     className: "shiiping_smart_ar_hide"
   }));
 };

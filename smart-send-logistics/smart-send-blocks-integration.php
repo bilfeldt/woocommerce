@@ -8,16 +8,14 @@ use Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface;
 class Smart_Send_Blocks_Integration implements IntegrationInterface
 {
 
-	/**
-	 * The name of the integration.
-	 *
-	 * @return string
-	 */
-	public function get_name()
-	{
-		return 'smart-send-logistics';
-	}
-
+   /**
+     * Gets the name of the integration.
+     *
+     * @return string
+     */
+    public function get_name() {
+        return SS_SHIPPING_WOO_BLOCK_NAME;
+    }
 	/**
 	 * When called invokes any initialization/setup for the integration.
 	 */
@@ -48,7 +46,7 @@ class Smart_Send_Blocks_Integration implements IntegrationInterface
 			function (\WC_Order $order, \WP_REST_Request $request) {
 				$smart_send_request_data = $request['extensions'][$this->get_name()];
 
-				$pickup_points = $smart_send_request_data['selectedpickuppoints'];
+				$pickup_points = $smart_send_request_data['selectedPickupPoints'];
 
 				$order->update_meta_data('ss_shipping_order_agent_no', $pickup_points);
 
