@@ -3,10 +3,22 @@
 use Automattic\WooCommerce\Blocks\StoreApi\Schemas\CheckoutSchema;
 
 /**
- *  Extend Store API.
+ * Class Smart_Send_Extend_Store_Endpoint
+ *
+ * Extends the WooCommerce Store API to add custom data to endpoints.
+ *
+ * This class is responsible for registering custom schema data to the
+ * WooCommerce Store API endpoints, such as the checkout endpoint.
+ *
+ * @package    Smart-Send-Logistics
+ * @subpackage API Extension
+ * @category   WooCommerce Blocks Checkout API Schema
+ * @author     Smart Send
  */
+
 class Smart_Send_Extend_Store_Endpoint
 {
+
 	/**
 	 * Stores Rest Extending instance.
 	 *
@@ -19,11 +31,15 @@ class Smart_Send_Extend_Store_Endpoint
 	 *
 	 * @var string
 	 */
-
 	const IDENTIFIER = SS_SHIPPING_WOO_BLOCK_NAME;
 
 	/**
 	 * Bootstraps the class and hooks required data.
+	 *
+	 * Initializes the class by getting the instance of the ExtendSchema and
+	 * registering the custom schema data to the store API endpoints.
+	 *
+	 * @return void
 	 */
 	public static function init()
 	{
@@ -33,10 +49,13 @@ class Smart_Send_Extend_Store_Endpoint
 
 	/**
 	 * Registers the actual data into each endpoint.
+	 *
+	 * Registers the custom schema data to the WooCommerce Store API endpoints.
+	 *
+	 * @return void
 	 */
 	public static function extend_store()
 	{
-
 		if (is_callable([self::$extend, 'register_endpoint_data'])) {
 			self::$extend->register_endpoint_data(
 				[
@@ -49,18 +68,16 @@ class Smart_Send_Extend_Store_Endpoint
 		}
 	}
 
-
 	/**
-	 * Register  schema into the Checkout endpoint.
+	 * Registers schema into the Checkout endpoint.
 	 *
 	 * @return array Registered schema.
 	 */
 	public static function extend_checkout_schema()
 	{
-
 		return [
-			'selectedPickupPoints' => [
-				'description' => 'Alternative Shipping Pickup Points',
+			'selectedPickupPoint' => [
+				'description' => 'Selected shipping pick-up point',
 				'type'        => 'string',
 				'context'     => ['view', 'edit'],
 				'readonly'    => true,

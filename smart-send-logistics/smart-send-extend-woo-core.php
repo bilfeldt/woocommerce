@@ -4,18 +4,30 @@
 include __DIR__ . '/includes/class-ss-shipping-wc-order.php';
 
 /**
- *  Extend WC Core.
+ * Class Smart_Send_Extend_Woo_Core
+ *
+ * Extends the WooCommerce core functionality for the Smart Send Logistics plugin.
+ *
+ * This class hooks into the WooCommerce Store API to extend the checkout schema and save custom
+ * shipping instructions to the order metadata. It also manages session initialization for storing
+ * shipping agent data.
+ *
+ * @package    SmartSendLogistics
+ * @subpackage WooCommerce Integration
+ * @category   WooCommerce API Data Storing
+ * @author     Smart Send
  */
+
 class Smart_Send_Extend_Woo_Core
 {
 
 	/**
-	 * Plugin Identifier, unique to each plugin.
+	 * Action hook for saving shipping instructions.
 	 *
 	 * @var string
 	 */
-
 	const ACTION_SAVE_SHIPPING_INSTRUCTIONS = 'woocommerce_store_api_checkout_update_order_from_request';
+
 	/**
 	 * Bootstraps the class and hooks required data.
 	 * 
@@ -26,7 +38,6 @@ class Smart_Send_Extend_Woo_Core
 		$this->save_shipping_instructions();
 	}
 
-
 	/**
 	 * Register  schema into the Checkout endpoint.
 	 *
@@ -35,8 +46,8 @@ class Smart_Send_Extend_Woo_Core
 	public function extend_checkout_schema()
 	{
 		return [
-			'selectedPickupPoints' => [
-				'description' => 'Alternative Shipping Pickup Points',
+			'selectedPickupPoint' => [
+				'description' => 'Selected shipping pick-up point',
 				'type'        => 'string',
 				'context'     => ['view', 'edit'],
 				'readonly'    => true,
@@ -48,6 +59,7 @@ class Smart_Send_Extend_Woo_Core
 			],
 		];
 	}
+
 	/** * Initializes session if not already started. */
 	private function initialize_session()
 	{
@@ -59,6 +71,7 @@ class Smart_Send_Extend_Woo_Core
 			$_SESSION['initialized'] = true;
 		}
 	}
+
 	/**
 	 * Saves the shipping instructions to the order's metadata.
 	 *
@@ -72,7 +85,7 @@ class Smart_Send_Extend_Woo_Core
 			function (\WC_Order $order, \WP_REST_Request $request) {
 				$smart_send_request_data = $request['extensions'][SS_SHIPPING_WOO_BLOCK_NAME];
 
-				$pickup_points = $smart_send_request_data['selectedPickupPoints'];
+				$pickup_points = $smart_send_request_data['selectedPickupPoint'];
 
 				$pickup_points = explode('?', $pickup_points);
 

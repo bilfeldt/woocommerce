@@ -274,7 +274,7 @@ if (!class_exists('SS_Shipping_WC')) :
                 [
                     [
                         'slug'  => 'smart-send-logistics',
-                        'title' => __('Smart_Send Blocks', 'smart-send-logistics'),
+                        'title' => __('Smart Send Blocks', 'smart-send-logistics'),
                     ],
                 ]
             );

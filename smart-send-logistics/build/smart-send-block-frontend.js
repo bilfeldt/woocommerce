@@ -64,26 +64,26 @@ const Block = ({
     const store = select("wc/store/validation");
     return store.getValidationError(validationErrorId);
   });
-  const [selectedPickupPoints, setselectedPickupPoints] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("try-again");
+  const [selectedPickupPoint, setselectedPickupPoint] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("try-again");
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
-    var carrier = "postnord";
     var street = setValue("shipping-address_1");
     var city = setValue("shipping-city");
     var country = setValue("components-form-token-input-0");
     country = _countries__WEBPACK_IMPORTED_MODULE_7__.countries[country];
     var postcode = setValue("shipping-postcode");
+    var selected = jQuery(".wc-block-components-shipping-rates-control").find("input[type=radio]:checked").val();
     if (isCalculating) {
       if (postcode !== null && street !== null && city !== null && country !== null) {
-        findClosestAgentByAddress(carrier, country, postcode, city, street);
+        findClosestAgentByAddress(selected, country, postcode, city, street);
       }
     }
   }, [isCalculating]);
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
-    setExtensionData("smart-send-logistics", "selectedPickupPoints", selectedPickupPoints);
-  }, [setExtensionData, selectedPickupPoints]);
+    setExtensionData("smart-send-logistics", "selectedPickupPoint", selectedPickupPoint);
+  }, [setExtensionData, selectedPickupPoint]);
   const [hasInteractedWithOtherInput, setHasInteractedWithOtherInput] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
-    if (setselectedPickupPoints !== "other") {
+    if (setselectedPickupPoint !== "other") {
       if (validationError) {
         clearValidationError(validationErrorId);
       }
@@ -95,25 +95,26 @@ const Block = ({
         hidden: !hasInteractedWithOtherInput
       }
     });
-  }, [clearValidationError, setselectedPickupPoints, setValidationErrors, validationErrorId, debouncedSetExtensionData, validationError]);
+  }, [clearValidationError, setselectedPickupPoint, setValidationErrors, validationErrorId, debouncedSetExtensionData, validationError]);
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "wp-block-smart-send-not-at-home"
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.SelectControl, {
     label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("TLS Delivery Point", "smart-send-logistics"),
-    value: selectedPickupPoints,
+    value: selectedPickupPoint,
     options: _options__WEBPACK_IMPORTED_MODULE_6__.options,
-    onChange: setselectedPickupPoints,
+    onChange: setselectedPickupPoint,
     className: "shiiping_smart_ar_hide"
   }));
 };
 
 // Function to find closest agent by address
-function findClosestAgentByAddress(carrier, country, postalCode, city, street) {
-  carrier = carrier;
+async function findClosestAgentByAddress(ss_agent, country, postalCode, city, street) {
   country = country;
   postalCode = postalCode;
   city = city;
   street = street;
+  var carrier = await getShippingCarrier(ss_agent);
+  console.log(carrier);
   getPickupPoints(carrier, country, postalCode, city, street);
 }
 function setValue(id) {
@@ -123,7 +124,7 @@ function setValue(id) {
   }
   return null;
 }
-const getPickupPoints = async (meta_data, country, postalCode, city, street) => {
+const getPickupPoints = async (carrier, country, postalCode, city, street) => {
   const url = "/wp-json/smart-send-logistics/v1/get-closest-pickup-points"; // Your endpoint URL
 
   const data = {
@@ -131,7 +132,7 @@ const getPickupPoints = async (meta_data, country, postalCode, city, street) => 
     postCode: postalCode,
     city: city,
     street: street,
-    meta_data: meta_data
+    carrier: carrier
   };
   try {
     const response = await fetch(url, {
@@ -170,11 +171,38 @@ function getSelectedShippingMethod() {
   if (selected.indexOf("smart_send") !== -1) {
     jQuery(".shiiping_smart_ar_hide").show();
     jQuery(".shiiping_smart_ar_hide").css("opacity", 1);
+    return selected;
   } else {
     jQuery(".shiiping_smart_ar_hide").hide();
     jQuery(".shiiping_smart_ar_hide").css("opacity", 0);
   }
 }
+const getShippingCarrier = async shipping_method => {
+  const url = "/wp-json/smart-send-logistics/v1/get-shipping-carrier"; // Your endpoint URL
+
+  const data = {
+    ss_method: shipping_method
+  };
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(errorData);
+    } else {
+      const results = await response.json();
+      return results.carrier;
+    }
+  } catch (error) {
+    console.log(error);
+    alert("Failed to fetch Shipping Carrier");
+  }
+};
 
 /***/ }),
 

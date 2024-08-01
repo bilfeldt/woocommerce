@@ -6,6 +6,9 @@ if (!defined('ABSPATH')) {
 
 use WooCommerce\Classes\WC_Order;
 
+require_once 'class-ss-shipping-endpoint.php';
+
+
 /**
  * WooCommerce Smart Send Shipping Frontend.
  *
@@ -13,6 +16,7 @@ use WooCommerce\Classes\WC_Order;
  * @category Shipping
  * @author   Smart Send
  */
+
 
 if (!class_exists('SS_Shipping_Frontend')) :
 
@@ -28,7 +32,6 @@ if (!class_exists('SS_Shipping_Frontend')) :
         {
             $this->init_hooks();
             $this->include_endpoint_class();
-
         }
 
         protected function init_hooks()
@@ -41,14 +44,17 @@ if (!class_exists('SS_Shipping_Frontend')) :
         }
         protected function include_endpoint_class()
         {
-            include  'class-ss-shipping-endpoint.php';
-            new SS_Shipping_Endpoint($this);
+            new SS_Shipping_Api_Endpoint($this);
         }
 
-        public function get_formatted_address_for_endpoint($agent)
+        /**
+         * Used to access the protected method get_formatted_address to be available in the class-ss-shipping-endpoint
+         */
+        public function get_formatted_address_for_endpoint(array $agent)
         {
             return  $this->get_formatted_address($agent);
         }
+
         /**
          * Display the pick-up points next to the Smart Send method
          */
@@ -96,8 +102,8 @@ if (!class_exists('SS_Shipping_Frontend')) :
                     echo '<div class="woocommerce-info ss-carrier-info">' . __('Carrier: ', 'smart-send-logistics') . $carrier . '</div>';
 
                     $this->carries = $carrier;
-                    $is_rest_api = '';
-                    $ss_agents = $this->find_closest_agents_by_address($carrier, $country, $postal_code, $city, $street, $is_rest_api);
+                    $is_rest_api = false;
+                    $ss_agents = $this->handle_agents_session($carrier, $country, $postal_code, $city, $street, $is_rest_api);
 
                     if (!empty($ss_agents)) {
                         $ss_setting = SS_SHIPPING_WC()->get_ss_shipping_settings();
@@ -125,31 +131,30 @@ if (!class_exists('SS_Shipping_Frontend')) :
                 }
             }
         }
- 
+
         /**
          * Get shipping method meta data
          */
-        public  function get_shipping_method_meta($shipping_method_name)
+        public function get_shipping_method_meta($shipping_method_name)
         {
             // Get all shipping zones
             $zones = WC_Shipping_Zones::get_zones();
             $zones[0] = WC_Shipping_Zones::get_zone(0); // Adding the '0' zone for locations not covered by other zones
 
             foreach ($zones as $zone) {
-                $zone_id = $zone['zone_id'];
-                $shipping_methods = WC_Shipping_Zones::get_zone($zone_id)->get_shipping_methods();
+                $shipping_methods = $zone['shipping_methods'];
 
                 foreach ($shipping_methods as $method) {
                     if ($method->method_title === $shipping_method_name) {
                         // Found the shipping method, retrieve its meta data
-                        $meta_data = $method->settings;
-                        return $method;
+                        return $method->settings;
                     }
                 }
             }
 
             return null; // Shipping method not found
         }
+
 
         /**
          * Find the closest agents by address
@@ -162,7 +167,7 @@ if (!class_exists('SS_Shipping_Frontend')) :
          *
          * @return array
          */
-        public function find_closest_agents_by_address($carrier, $country, $postal_code, $city, $street, $restapiend)
+        public function find_closest_agents_by_address($carrier, $country, $postal_code, $city, $street)
         {
             SS_SHIPPING_WC()->log_msg('Called "findClosestAgentByAddress" for website ' . SS_SHIPPING_WC()->get_website_url() . ' with carrier = "' . $carrier . '", country = "' . $country . '", postcode = "' . $postal_code . '", city = "' . $city . '", street = "' . $street . '"');
 
@@ -171,24 +176,36 @@ if (!class_exists('SS_Shipping_Frontend')) :
                 $ss_agents = SS_SHIPPING_WC()->get_api_handle()->getData();
 
                 SS_SHIPPING_WC()->log_msg('Response from "findClosestAgentByAddress": ' . SS_SHIPPING_WC()->get_api_handle()->getResponseBody());
-                // Save all of the agents in sessions
-                if (isset($restapiend) && !empty($restapiend)) {
-                    session_start();
-                    if (!isset($_SESSION['initialized'])) {
-                        session_regenerate_id(true);
-                        $_SESSION['ss_shipping_agents_blocks'] = $ss_agents;
-                    }
 
-                    return $ss_agents;
-                } else {
-                    WC()->session->set('ss_shipping_agents', $ss_agents);
-                    return $ss_agents;
-                }
+                return $ss_agents;
             } else {
                 SS_SHIPPING_WC()->log_msg('Response from "findClosestAgentByAddress": ' . SS_SHIPPING_WC()->get_api_handle()->getErrorString());
 
                 return array();
             }
+        }
+
+
+        /**
+         * function to fetch agents and manage the sessions
+         */
+
+        public function handle_agents_session($carrier, $country, $postal_code, $city, $street, $is_rest_api)
+        {
+
+            $ss_agents = $this->find_closest_agents_by_address($carrier, $country, $postal_code, $city, $street);
+
+            // Save all of the agents in sessions
+            if (isset($is_rest_api) && !empty($is_rest_api) && $is_rest_api == true) {
+                session_start();
+                if (!isset($_SESSION['initialized'])) {
+                    session_regenerate_id(true);
+                    $_SESSION['ss_shipping_agents_blocks'] = $ss_agents;
+                }
+            } else {
+                WC()->session->set('ss_shipping_agents', $ss_agents);
+            }
+            return $ss_agents;
         }
 
         /**
