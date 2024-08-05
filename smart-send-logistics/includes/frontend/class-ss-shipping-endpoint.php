@@ -19,6 +19,7 @@ if (!defined('ABSPATH')) {
  */
 class SS_Shipping_Api_Endpoint
 {
+
     /**
      * @var FrontendInterface $frontend An instance of the frontend class handling agent fetching and session management.
      */
@@ -99,11 +100,10 @@ class SS_Shipping_Api_Endpoint
         if (empty($shipping_method)) {
             return new WP_REST_Response(array('message' => __('Invalid Shipping Method ID', 'smart-send-logistics')), 400);
         }
-        $carrier_keys = ["name","id"];
+
+        $carrier_keys = ["name", "id"];
 
         $shipping_method_parts = explode(":", $shipping_method);
-
-
 
         if (count($shipping_method_parts) > 1) {
             // Get the second part of the shipping method which is the ID

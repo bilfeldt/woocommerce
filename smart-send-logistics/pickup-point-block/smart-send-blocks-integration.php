@@ -72,13 +72,13 @@ class Smart_Send_Blocks_Integration implements IntegrationInterface
      */
     private function register_main_integration()
     {
-        $script_path = '/build/index.js';
-        $style_path  = '/build/style-index.css';
+        $script_path = '../build/index.js';
+        $style_path  = '../build/style-index.css';
 
         $script_url = plugins_url($script_path, __FILE__);
         $style_url  = plugins_url($style_path, __FILE__);
 
-        $script_asset_path = dirname(__FILE__) . '/build/index.asset.php';
+        $script_asset_path = dirname(__FILE__) . '../build/index.asset.php';
         $script_asset      = file_exists($script_asset_path)
             ? require $script_asset_path
             : [
@@ -143,7 +143,7 @@ class Smart_Send_Blocks_Integration implements IntegrationInterface
 
     public function register_smart_send_block_editor_styles()
     {
-        $style_path = '/build/style-smart-send-block.css';
+        $style_path = '../build/style-smart-send-block.css';
         $style_url = plugins_url($style_path, __FILE__);
 
         wp_enqueue_style(
@@ -156,9 +156,9 @@ class Smart_Send_Blocks_Integration implements IntegrationInterface
 
     public function register_smart_send_block_editor_scripts()
     {
-        $script_path       = '/build/smart-send-block.js';
+        $script_path       = '../build/smart-send-block.js';
         $script_url        = plugins_url($script_path, __FILE__);
-        $script_asset_path = dirname(__FILE__) . '/build/smart-send-block.asset.php';
+        $script_asset_path = SS_SHIPPING_PLUGIN_DIR_PATH . '/build/smart-send-block.asset.php';
         $script_asset      = file_exists($script_asset_path)
             ? require $script_asset_path
             : [
@@ -183,9 +183,9 @@ class Smart_Send_Blocks_Integration implements IntegrationInterface
 
     public function register_smart_send_block_frontend_scripts()
     {
-        $script_path       = '/build/smart-send-block-frontend.js';
+        $script_path       = '../build/smart-send-block-frontend.js';
         $script_url        = plugins_url($script_path, __FILE__);
-        $script_asset_path = dirname(__FILE__) . '/build/smart-send-block-frontend.asset.php';
+        $script_asset_path = SS_SHIPPING_PLUGIN_DIR_PATH . '/build/smart-send-block-frontend.asset.php';
         $script_asset      = file_exists($script_asset_path)
             ? require $script_asset_path
             : [

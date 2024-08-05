@@ -205,9 +205,9 @@ if (!class_exists('SS_Shipping_WC')) :
              * Include the dependencies needed to instantiate the block.
              */
             add_action('woocommerce_blocks_loaded', function () {
-                require_once __DIR__ . '/smart-send-extend-store-endpoint.php';
-                require_once __DIR__ . '/smart-send-extend-woo-core.php';
-                require_once __DIR__ . '/smart-send-blocks-integration.php';
+                require_once __DIR__ . '/pickup-point-block/smart-send-extend-store-endpoint.php';
+                require_once __DIR__ . '/pickup-point-block/smart-send-extend-woo-core.php';
+                require_once __DIR__ . '/pickup-point-block/smart-send-blocks-integration.php';
 
                 // Initialize our store endpoint extension when WC Blocks is loaded.
                 Smart_Send_Extend_Store_Endpoint::init();
@@ -279,6 +279,7 @@ if (!class_exists('SS_Shipping_WC')) :
                 ]
             );
         }
+
         /**
          * Load Admin CSS
          */

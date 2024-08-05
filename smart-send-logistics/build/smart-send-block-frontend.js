@@ -114,7 +114,6 @@ async function findClosestAgentByAddress(ss_agent, country, postalCode, city, st
   city = city;
   street = street;
   var carrier = await getShippingCarrier(ss_agent);
-  console.log(carrier);
   getPickupPoints(carrier, country, postalCode, city, street);
 }
 function setValue(id) {

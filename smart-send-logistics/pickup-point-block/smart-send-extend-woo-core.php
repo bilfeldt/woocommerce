@@ -1,8 +1,8 @@
 <?php
 
 
-include __DIR__ . '/includes/class-ss-shipping-wc-order.php';
-
+include '../includes/class-ss-shipping-wc-order.php';
+include  'smart-send-utility-session.php';
 /**
  * Class Smart_Send_Extend_Woo_Core
  *
@@ -35,7 +35,7 @@ class Smart_Send_Extend_Woo_Core
 	 */
 	public function init()
 	{
-		$this->save_shipping_instructions();
+		$this->save_pickup_point();
 	}
 
 	/**
@@ -63,21 +63,15 @@ class Smart_Send_Extend_Woo_Core
 	/** * Initializes session if not already started. */
 	private function initialize_session()
 	{
-		if (session_status() === PHP_SESSION_NONE) {
-			session_start();
-		}
-		if (!isset($_SESSION['initialized'])) {
-			session_regenerate_id(true);
-			$_SESSION['initialized'] = true;
-		}
+		Smart_Send_Utility_Session::initialize();
 	}
 
 	/**
-	 * Saves the shipping instructions to the order's metadata.
+	 * Saves the pickup point to the order's metadata.
 	 *
 	 * @return void
 	 */
-	private function save_shipping_instructions()
+	private function save_pickup_point()
 	{
 
 		add_action(
@@ -85,23 +79,18 @@ class Smart_Send_Extend_Woo_Core
 			function (\WC_Order $order, \WP_REST_Request $request) {
 				$smart_send_request_data = $request['extensions'][SS_SHIPPING_WOO_BLOCK_NAME];
 
-				$pickup_points = $smart_send_request_data['selectedPickupPoint'];
+				$pickup_point = $smart_send_request_data['selectedPickupPoint'];
 
-				$pickup_points = explode('?', $pickup_points);
-
-
-				$order->update_meta_data('ss_shipping_order_agent_no', $pickup_points[0]);
+				$order->update_meta_data('ss_shipping_order_agent_no', $pickup_point);
 
 				$this->initialize_session();
 
 				$agent_list = $_SESSION['ss_shipping_agents_blocks'];
 
-				$selected_agent_no = 0;
-
 				if ($agent_list) {
 					foreach ($agent_list as $agent_key => $agent_value) {
 						// If agent selected for the order, save it
-						if ($agent_value->agent_no == $pickup_points[0]) {
+						if ($agent_value->agent_no == $pickup_point) {
 
 							$selected_agent = $agent_value;
 							$order->update_meta_data('_ss_shipping_order_agent', $selected_agent);

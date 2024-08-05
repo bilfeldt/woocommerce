@@ -50,7 +50,7 @@ if (!class_exists('SS_Shipping_Frontend')) :
         /**
          * Used to access the protected method get_formatted_address to be available in the class-ss-shipping-endpoint
          */
-        public function get_formatted_address_for_endpoint(array $agent)
+        public function get_formatted_address_for_endpoint(object $agent)
         {
             return  $this->get_formatted_address($agent);
         }
@@ -364,8 +364,6 @@ if (!class_exists('SS_Shipping_Frontend')) :
                     $aggentdetails = $ordered_agent[1];
                     $formatted_address = str_replace(',', '<br/>', $aggentdetails);
                 }
-
-
 
                 echo '<h2>' . __('Pick-up Point', 'smart-send-logistics') . '</h2>'
                     . '<address>' . $formatted_address . '</address>';
