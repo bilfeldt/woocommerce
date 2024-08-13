@@ -73,11 +73,8 @@ class Smart_Send_Blocks_Integration implements IntegrationInterface
     private function register_main_integration()
     {
         $script_path = '../build/index.js';
-        $style_path  = '../build/style-index.css';
 
         $script_url = plugins_url($script_path, __FILE__);
-        $style_url  = plugins_url($style_path, __FILE__);
-
         $script_asset_path = dirname(__FILE__) . '../build/index.asset.php';
         $script_asset      = file_exists($script_asset_path)
             ? require $script_asset_path
@@ -85,13 +82,6 @@ class Smart_Send_Blocks_Integration implements IntegrationInterface
                 'dependencies' => [],
                 'version'      => $this->get_file_version($script_path),
             ];
-
-        wp_enqueue_style(
-            'smart-send-blocks-integration',
-            $style_url,
-            [],
-            $this->get_file_version($style_path)
-        );
 
         wp_register_script(
             'smart-send-blocks-integration',

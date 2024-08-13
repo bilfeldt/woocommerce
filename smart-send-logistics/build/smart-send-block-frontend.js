@@ -46,7 +46,7 @@ const Block = ({
   extensions
 }) => {
   const isCalculating = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_4__.useSelect)(select => {
-    const store = select("wc/store/checkout");
+    const store = select('wc/store/checkout');
     return store.isCalculating();
   });
   const {
@@ -55,35 +55,39 @@ const Block = ({
   const debouncedSetExtensionData = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useCallback)((0,lodash__WEBPACK_IMPORTED_MODULE_5__.debounce)((namespace, key, value) => {
     setExtensionData(namespace, key, value);
   }, 1000), [setExtensionData]);
-  const validationErrorId = "smart-send-other-value";
+  const validationErrorId = 'smart-send-other-value';
   const {
     setValidationErrors,
     clearValidationError
-  } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_4__.useDispatch)("wc/store/validation");
+  } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_4__.useDispatch)('wc/store/validation');
   const validationError = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_4__.useSelect)(select => {
-    const store = select("wc/store/validation");
+    const store = select('wc/store/validation');
     return store.getValidationError(validationErrorId);
   });
-  const [selectedPickupPoint, setselectedPickupPoint] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("try-again");
+  const [selectedPickupPoint, setselectedPickupPoint] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)('try-again');
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
-    var street = setValue("shipping-address_1");
-    var city = setValue("shipping-city");
-    var country = setValue("components-form-token-input-0");
+    var street = setValue('shipping-address_1');
+    var city = setValue('shipping-city');
+    var country = setValue('components-form-token-input-0');
     country = _countries__WEBPACK_IMPORTED_MODULE_7__.countries[country];
-    var postcode = setValue("shipping-postcode");
-    var selected = jQuery(".wc-block-components-shipping-rates-control").find("input[type=radio]:checked").val();
-    if (isCalculating) {
-      if (postcode !== null && street !== null && city !== null && country !== null) {
-        findClosestAgentByAddress(selected, country, postcode, city, street);
+    var postcode = setValue('shipping-postcode');
+    var selected = jQuery('.wc-block-components-shipping-rates-control').find('input[type=radio]:checked').val();
+    const fetchPickupPoint = async () => {
+      if (isCalculating) {
+        if (postcode && street && city && country) {
+          const pickupDefaultValue = await findClosestAgentByAddress(selected, country, postcode, city, street);
+          setselectedPickupPoint(pickupDefaultValue);
+        }
       }
-    }
+    };
+    fetchPickupPoint();
   }, [isCalculating]);
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
-    setExtensionData("smart-send-logistics", "selectedPickupPoint", selectedPickupPoint);
+    setExtensionData('smart-send-logistics', 'selectedPickupPoint', selectedPickupPoint);
   }, [setExtensionData, selectedPickupPoint]);
   const [hasInteractedWithOtherInput, setHasInteractedWithOtherInput] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
-    if (setselectedPickupPoint !== "other") {
+    if (setselectedPickupPoint !== 'other') {
       if (validationError) {
         clearValidationError(validationErrorId);
       }
@@ -91,19 +95,19 @@ const Block = ({
     }
     setValidationErrors({
       [validationErrorId]: {
-        message: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("Please add some text", "smart-send-logistics"),
+        message: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Please select a valid pickup point', 'smart-send-logistics'),
         hidden: !hasInteractedWithOtherInput
       }
     });
   }, [clearValidationError, setselectedPickupPoint, setValidationErrors, validationErrorId, debouncedSetExtensionData, validationError]);
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: "wp-block-smart-send-not-at-home"
+    className: "wp-block-smart-send-pickup-points"
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.SelectControl, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)("TLS Delivery Point", "smart-send-logistics"),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Select pick-up point', 'smart-send-logistics'),
     value: selectedPickupPoint,
     options: _options__WEBPACK_IMPORTED_MODULE_6__.options,
     onChange: setselectedPickupPoint,
-    className: "shiiping_smart_ar_hide"
+    className: "select_ss_pickup_point"
   }));
 };
 
@@ -114,7 +118,10 @@ async function findClosestAgentByAddress(ss_agent, country, postalCode, city, st
   city = city;
   street = street;
   var carrier = await getShippingCarrier(ss_agent);
-  getPickupPoints(carrier, country, postalCode, city, street);
+  console.log(carrier);
+  var defaultvalue = getPickupPoints(carrier, country, postalCode, city, street);
+  console.log(defaultvalue);
+  return defaultvalue;
 }
 function setValue(id) {
   var element = document.getElementById(id);
@@ -124,7 +131,7 @@ function setValue(id) {
   return null;
 }
 const getPickupPoints = async (carrier, country, postalCode, city, street) => {
-  const url = "/wp-json/smart-send-logistics/v1/get-closest-pickup-points"; // Your endpoint URL
+  const url = '/wp-json/smart-send-logistics/v1/get-closest-pickup-points'; // Custom endpoint registered by this package
 
   const data = {
     country: country,
@@ -135,58 +142,59 @@ const getPickupPoints = async (carrier, country, postalCode, city, street) => {
   };
   try {
     const response = await fetch(url, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(data)
     });
     if (!response.ok) {
       const errorData = await response.json();
-      jQuery(".shiiping_smart_ar_hide").hide();
-      jQuery(".shiiping_smart_ar_hide").css("opacity", 0);
+      jQuery('.select_ss_pickup_point').hide();
+      jQuery('.select_ss_pickup_point').css('opacity', 0);
     } else {
       const results = await response.json();
       const sortedData = Object.entries(results).sort((a, b) => {
-        const distanceA = a[0] === "0" ? 0 : parseFloat(a[1].split(":")[0].replace("km", "").replace("m", "")) * (a[1].includes("km") ? 1000 : 1);
-        const distanceB = b[0] === "0" ? 0 : parseFloat(b[1].split(":")[0].replace("km", "").replace("m", "")) * (b[1].includes("km") ? 1000 : 1);
+        const distanceA = a[0] === '0' ? 0 : parseFloat(a[1].split(':')[0].replace('km', '').replace('m', '')) * (a[1].includes('km') ? 1000 : 1);
+        const distanceB = b[0] === '0' ? 0 : parseFloat(b[1].split(':')[0].replace('km', '').replace('m', '')) * (b[1].includes('km') ? 1000 : 1);
         return distanceB - distanceA;
       });
       var reversedrestoreddata = sortedData.reverse();
-      var output = "";
+      var output = '';
       jQuery.each(reversedrestoreddata, function (key, value) {
-        output += '<option value="' + value[0] + '">' + value[1] + "</option>";
+        output += '<option value="' + value[0] + '">' + value[1] + '</option>';
       });
-      jQuery(".shiiping_smart_ar_hide").find("select").html(output);
+      jQuery('.select_ss_pickup_point').find('select').html(output);
       getSelectedShippingMethod();
+      return reversedrestoreddata[0][0];
     }
   } catch (error) {
     console.log(error);
-    alert("Failed to fetch pick-up points");
+    alert('Failed to fetch pick-up points');
   }
 };
 function getSelectedShippingMethod() {
-  var selected = jQuery(".wc-block-components-shipping-rates-control").find("input[type=radio]:checked").val();
-  if (selected.indexOf("smart_send") !== -1) {
-    jQuery(".shiiping_smart_ar_hide").show();
-    jQuery(".shiiping_smart_ar_hide").css("opacity", 1);
+  var selected = jQuery('.wc-block-components-shipping-rates-control').find('input[type=radio]:checked').val();
+  if (selected.indexOf('smart_send') !== -1) {
+    jQuery('.select_ss_pickup_point').show();
+    jQuery('.select_ss_pickup_point').css('opacity', 1);
     return selected;
   } else {
-    jQuery(".shiiping_smart_ar_hide").hide();
-    jQuery(".shiiping_smart_ar_hide").css("opacity", 0);
+    jQuery('.select_ss_pickup_point').hide();
+    jQuery('.select_ss_pickup_point').css('opacity', 0);
   }
 }
 const getShippingCarrier = async shipping_method => {
-  const url = "/wp-json/smart-send-logistics/v1/get-shipping-carrier"; // Your endpoint URL
+  const url = '/wp-json/smart-send-logistics/v1/get-shipping-carrier'; // Custom endpoint registered by this package
 
   const data = {
     ss_method: shipping_method
   };
   try {
     const response = await fetch(url, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(data)
     });
@@ -199,7 +207,7 @@ const getShippingCarrier = async shipping_method => {
     }
   } catch (error) {
     console.log(error);
-    alert("Failed to fetch Shipping Carrier");
+    alert('Failed to fetch Shipping Carrier');
   }
 };
 

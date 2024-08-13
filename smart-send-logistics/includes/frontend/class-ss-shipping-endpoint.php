@@ -3,7 +3,7 @@
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
-
+include '../../pickup-point-block/smart-send-utility-session.php';
 /**
  * Class SS_Shipping_Api_Endpoint
  *
@@ -75,15 +75,12 @@ class SS_Shipping_Api_Endpoint
         $ss_agents = $this->frontend->handle_agents_session($carrier, $country, $postal_code, $city, $street, $is_rest_api);
         if (!empty($ss_agents)) {
             $ss_agent_options = array();
-            $ss_setting = SS_SHIPPING_WC()->get_ss_shipping_settings();
-
-            if (!isset($ss_setting['default_select_agent']) || $ss_setting['default_select_agent'] == 'no') {
-                $ss_agent_options[0] = __('- Select Pick-up Point -', 'smart-send-logistics');
-            }
             foreach ($ss_agents as $key => $agent) {
                 $formatted_address = $this->frontend->get_formatted_address_for_endpoint($agent);
                 $ss_agent_options[$agent->agent_no] = $formatted_address;
             }
+
+
             return new WP_REST_Response($ss_agent_options, 200);
         } else {
             return new WP_REST_Response(array('message' => __('No pick-up points found', 'smart-send-logistics')), 404);
@@ -120,7 +117,13 @@ class SS_Shipping_Api_Endpoint
         $options = get_option('woocommerce_' . $shipping_method_instance->id . '_' . $shipping_method_instance->instance_id . '_settings');
         $shipping_agent = $options['method'];
         $shipping_agent = explode("_", $shipping_agent);
-        $shipping_carrier = array('carrier' => $shipping_agent[0]);
-        return new WP_REST_Response($shipping_carrier, 200);
+        $shipping_carrier_info=[
+            'id' => $shipping_method_id,
+            'carrier' => $shipping_agent[0],
+            'method' => $options['method'],
+            'show_pickup_selector' => true,
+            'default_first_pickup_point' => false
+        ];
+        return new WP_REST_Response($shipping_carrier_info, 200);
     }
 }

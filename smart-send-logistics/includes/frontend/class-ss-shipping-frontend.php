@@ -47,6 +47,11 @@ if (!class_exists('SS_Shipping_Frontend')) :
             new SS_Shipping_Api_Endpoint($this);
         }
 
+        /** * Initializes session if not already started. */
+        private function initialize_session()
+        {
+            Smart_Send_Utility_Session::initialize();
+        }
         /**
          * Used to access the protected method get_formatted_address to be available in the class-ss-shipping-endpoint
          */
@@ -109,9 +114,6 @@ if (!class_exists('SS_Shipping_Frontend')) :
                         $ss_setting = SS_SHIPPING_WC()->get_ss_shipping_settings();
 
                         $ss_agent_options = array();
-                        if (!isset($ss_setting['default_select_agent']) || $ss_setting['default_select_agent'] == 'no') {
-                            $ss_agent_options[0] = __('- Select Pick-up Point -', 'smart-send-logistics');
-                        }
 
                         foreach ($ss_agents as $key => $agent) {
                             $formatted_address = $this->get_formatted_address($agent);
@@ -132,28 +134,6 @@ if (!class_exists('SS_Shipping_Frontend')) :
             }
         }
 
-        /**
-         * Get shipping method meta data
-         */
-        public function get_shipping_method_meta($shipping_method_name)
-        {
-            // Get all shipping zones
-            $zones = WC_Shipping_Zones::get_zones();
-            $zones[0] = WC_Shipping_Zones::get_zone(0); // Adding the '0' zone for locations not covered by other zones
-
-            foreach ($zones as $zone) {
-                $shipping_methods = $zone['shipping_methods'];
-
-                foreach ($shipping_methods as $method) {
-                    if ($method->method_title === $shipping_method_name) {
-                        // Found the shipping method, retrieve its meta data
-                        return $method->settings;
-                    }
-                }
-            }
-
-            return null; // Shipping method not found
-        }
 
 
         /**
@@ -197,11 +177,9 @@ if (!class_exists('SS_Shipping_Frontend')) :
 
             // Save all of the agents in sessions
             if (isset($is_rest_api) && !empty($is_rest_api) && $is_rest_api == true) {
-                session_start();
-                if (!isset($_SESSION['initialized'])) {
-                    session_regenerate_id(true);
-                    $_SESSION['ss_shipping_agents_blocks'] = $ss_agents;
-                }
+                $this->initialize_session();
+
+                $_SESSION['ss_shipping_agents_blocks'] = $ss_agents;
             } else {
                 WC()->session->set('ss_shipping_agents', $ss_agents);
             }
@@ -354,19 +332,14 @@ if (!class_exists('SS_Shipping_Frontend')) :
 
 
                 $formatted_address = $this->get_formatted_address($ordered_agent, -1);
+                
                 // Display in block instead of one line
-                // $formatted_address = str_replace(',', '<br/>', $formatted_address);
+                $formatted_address = str_replace(',', '<br/>', $formatted_address);
 
-                if (gettype($ordered_agent) == 'object') {
-                    $formatted_address = $this->get_formatted_address($ordered_agent, -1);
-                } else {
-                    $ordered_agent = explode(':', $ordered_agent);
-                    $aggentdetails = $ordered_agent[1];
-                    $formatted_address = str_replace(',', '<br/>', $aggentdetails);
-                }
-
-                echo '<h2>' . __('Pick-up Point', 'smart-send-logistics') . '</h2>'
+                if(!empty($formatted_address)){
+                    echo '<h2>' . __('Pick-up Point', 'smart-send-logistics') . '</h2>'
                     . '<address>' . $formatted_address . '</address>';
+                }
             }
         }
 

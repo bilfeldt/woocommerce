@@ -81,6 +81,7 @@ class Smart_Send_Extend_Woo_Core
 
 				$pickup_point = $smart_send_request_data['selectedPickupPoint'];
 
+
 				$order->update_meta_data('ss_shipping_order_agent_no', $pickup_point);
 
 				$this->initialize_session();
