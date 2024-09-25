@@ -77,11 +77,12 @@ class SS_Shipping_Api_Endpoint
             $ss_agent_options = array();
             foreach ($ss_agents as $key => $agent) {
                 $formatted_address = $this->frontend->get_formatted_address_for_endpoint($agent);
+            
                 $ss_agent_options[$agent->agent_no] = $formatted_address;
             }
 
 
-            return new WP_REST_Response($ss_agent_options, 200);
+            return new WP_REST_Response($ss_agents, 200);
         } else {
             return new WP_REST_Response(array('message' => __('No pick-up points found', 'smart-send-logistics')), 404);
         }

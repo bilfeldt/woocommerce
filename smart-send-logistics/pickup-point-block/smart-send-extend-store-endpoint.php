@@ -78,12 +78,12 @@ class Smart_Send_Extend_Store_Endpoint
 		return [
 			'selectedPickupPoint' => [
 				'description' => 'Selected shipping pick-up point',
-				'type'        => 'string',
+				'type'        => 'object',
 				'context'     => ['view', 'edit'],
 				'readonly'    => true,
 				'arg_options' => [
 					'validate_callback' => function ($value) {
-						return is_string($value);
+						return is_array($value);
 					},
 				],
 			],

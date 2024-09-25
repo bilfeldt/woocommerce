@@ -177,9 +177,7 @@ if (!class_exists('SS_Shipping_Frontend')) :
 
             // Save all of the agents in sessions
             if (isset($is_rest_api) && !empty($is_rest_api) && $is_rest_api == true) {
-                $this->initialize_session();
-
-                $_SESSION['ss_shipping_agents_blocks'] = $ss_agents;
+                 return $ss_agents;
             } else {
                 WC()->session->set('ss_shipping_agents', $ss_agents);
             }

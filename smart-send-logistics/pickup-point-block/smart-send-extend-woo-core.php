@@ -48,12 +48,12 @@ class Smart_Send_Extend_Woo_Core
 		return [
 			'selectedPickupPoint' => [
 				'description' => 'Selected shipping pick-up point',
-				'type'        => 'string',
+				'type'        => 'object',
 				'context'     => ['view', 'edit'],
 				'readonly'    => true,
 				'arg_options' => [
 					'validate_callback' => function ($value) {
-						return is_string($value);
+						return is_array($value);
 					},
 				],
 			],
@@ -73,36 +73,21 @@ class Smart_Send_Extend_Woo_Core
 	 */
 	private function save_pickup_point()
 	{
-
 		add_action(
 			self::ACTION_SAVE_SHIPPING_INSTRUCTIONS,
 			function (\WC_Order $order, \WP_REST_Request $request) {
 				$smart_send_request_data = $request['extensions'][SS_SHIPPING_WOO_BLOCK_NAME];
-
 				$pickup_point = $smart_send_request_data['selectedPickupPoint'];
 
+				// Update agent number
+				$order->update_meta_data('ss_shipping_order_agent_no', $pickup_point['agent_no']);
 
-				$order->update_meta_data('ss_shipping_order_agent_no', $pickup_point);
+				$pickup_point = json_decode(json_encode($pickup_point));
 
-				$this->initialize_session();
+				// Update the entire pickup point object
+				$order->update_meta_data('_ss_shipping_order_agent', $pickup_point);
 
-				$agent_list = $_SESSION['ss_shipping_agents_blocks'];
-
-				if ($agent_list) {
-					foreach ($agent_list as $agent_key => $agent_value) {
-						// If agent selected for the order, save it
-						if ($agent_value->agent_no == $pickup_point) {
-
-							$selected_agent = $agent_value;
-							$order->update_meta_data('_ss_shipping_order_agent', $selected_agent);
-							break;
-						}
-					}
-				}
-
-				/**
-				 * 💡Don't forget to save the order using `$order->save()`.
-				 */
+				// Save the order 
 				$order->save();
 			},
 			10,

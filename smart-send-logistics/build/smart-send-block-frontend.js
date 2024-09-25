@@ -56,6 +56,7 @@ const Block = ({
     setExtensionData(namespace, key, value);
   }, 1000), [setExtensionData]);
   const validationErrorId = 'smart-send-other-value';
+  const [availablePickupPoints, setavailablePickupPoints] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)([]);
   const {
     setValidationErrors,
     clearValidationError
@@ -75,8 +76,12 @@ const Block = ({
     const fetchPickupPoint = async () => {
       if (isCalculating) {
         if (postcode && street && city && country) {
-          const pickupDefaultValue = await findClosestAgentByAddress(selected, country, postcode, city, street);
-          setselectedPickupPoint(pickupDefaultValue);
+          const pickupPointsArray = await findClosestAgentByAddress(selected, country, postcode, city, street);
+          if (pickupPointsArray.length > 0) {
+            const pickupDefaultValue = pickupPointsArray.length > 0 ? pickupPointsArray[0] : '';
+            setavailablePickupPoints(pickupPointsArray);
+            setselectedPickupPoint(pickupDefaultValue);
+          }
         }
       }
     };
@@ -100,13 +105,21 @@ const Block = ({
       }
     });
   }, [clearValidationError, setselectedPickupPoint, setValidationErrors, validationErrorId, debouncedSetExtensionData, validationError]);
+  const handlePickupPointChange = value => {
+    jQuery.each(availablePickupPoints, function (index, pickupPoint) {
+      var agentAddress = pickupPoint.agent_no;
+      if (agentAddress === value) {
+        setselectedPickupPoint(pickupPoint);
+      }
+    });
+  };
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "wp-block-smart-send-pickup-points"
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.SelectControl, {
     label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Select pick-up point', 'smart-send-logistics'),
-    value: selectedPickupPoint,
+    value: selectedPickupPoint['agent_no'],
     options: _options__WEBPACK_IMPORTED_MODULE_6__.options,
-    onChange: setselectedPickupPoint,
+    onChange: handlePickupPointChange,
     className: "select_ss_pickup_point"
   }));
 };
@@ -118,9 +131,7 @@ async function findClosestAgentByAddress(ss_agent, country, postalCode, city, st
   city = city;
   street = street;
   var carrier = await getShippingCarrier(ss_agent);
-  console.log(carrier);
   var defaultvalue = getPickupPoints(carrier, country, postalCode, city, street);
-  console.log(defaultvalue);
   return defaultvalue;
 }
 function setValue(id) {
@@ -152,24 +163,24 @@ const getPickupPoints = async (carrier, country, postalCode, city, street) => {
       const errorData = await response.json();
       jQuery('.select_ss_pickup_point').hide();
       jQuery('.select_ss_pickup_point').css('opacity', 0);
+      return [];
     } else {
-      const results = await response.json();
-      const sortedData = Object.entries(results).sort((a, b) => {
-        const distanceA = a[0] === '0' ? 0 : parseFloat(a[1].split(':')[0].replace('km', '').replace('m', '')) * (a[1].includes('km') ? 1000 : 1);
-        const distanceB = b[0] === '0' ? 0 : parseFloat(b[1].split(':')[0].replace('km', '').replace('m', '')) * (b[1].includes('km') ? 1000 : 1);
-        return distanceB - distanceA;
-      });
-      var reversedrestoreddata = sortedData.reverse();
-      var output = '';
-      jQuery.each(reversedrestoreddata, function (key, value) {
-        output += '<option value="' + value[0] + '">' + value[1] + '</option>';
-      });
-      jQuery('.select_ss_pickup_point').find('select').html(output);
-      getSelectedShippingMethod();
-      return reversedrestoreddata[0][0];
+      const resultedPickupPoints = await response.json();
+      if (Array.isArray(resultedPickupPoints)) {
+        var output = '';
+        jQuery.each(resultedPickupPoints, function (index, pickupPoint) {
+          var agentAddress = formatAgentAddress(pickupPoint);
+          output += '<option value="' + pickupPoint.agent_no + '">' + agentAddress + '</option>';
+        });
+        jQuery('.select_ss_pickup_point').find('select').html(output);
+        getSelectedShippingMethod();
+        return resultedPickupPoints;
+      } else {
+        resultedPickupPoints = [];
+        return resultedPickupPoints;
+      }
     }
   } catch (error) {
-    console.log(error);
     alert('Failed to fetch pick-up points');
   }
 };
@@ -200,16 +211,18 @@ const getShippingCarrier = async shipping_method => {
     });
     if (!response.ok) {
       const errorData = await response.json();
-      console.log(errorData);
     } else {
       const results = await response.json();
       return results.carrier;
     }
   } catch (error) {
-    console.log(error);
     alert('Failed to fetch Shipping Carrier');
   }
 };
+function formatAgentAddress(address) {
+  var pickupPointDistance = parseFloat(address.distance) >= 1 ? parseFloat(address.distance).toFixed(2) + ' km' : parseInt(parseFloat(address.distance) * 1000) + ' m';
+  return pickupPointDistance + ': ' + address.company + address.address_line1 + ' ' + address.postal_code + ' ' + address.city;
+}
 
 /***/ }),
 
