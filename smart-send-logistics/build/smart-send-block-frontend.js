@@ -76,10 +76,10 @@ const Block = ({
     const fetchPickupPoint = async () => {
       if (isCalculating) {
         if (postcode && street && city && country) {
-          const pickupPointsArray = await findClosestAgentByAddress(selected, country, postcode, city, street);
-          if (pickupPointsArray.length > 0) {
-            const pickupDefaultValue = pickupPointsArray.length > 0 ? pickupPointsArray[0] : '';
-            setavailablePickupPoints(pickupPointsArray);
+          const pickupPoints = await findClosestAgentByAddress(selected, country, postcode, city, street);
+          if (pickupPoints.length > 0) {
+            const pickupDefaultValue = pickupPoints[0];
+            setavailablePickupPoints(pickupPoints);
             setselectedPickupPoint(pickupDefaultValue);
           }
         }
@@ -105,13 +105,11 @@ const Block = ({
       }
     });
   }, [clearValidationError, setselectedPickupPoint, setValidationErrors, validationErrorId, debouncedSetExtensionData, validationError]);
-  const handlePickupPointChange = value => {
-    jQuery.each(availablePickupPoints, function (index, pickupPoint) {
-      var agentAddress = pickupPoint.agent_no;
-      if (agentAddress === value) {
-        setselectedPickupPoint(pickupPoint);
-      }
-    });
+  const handlePickupPointChange = agentNo => {
+    const selectedPoint = availablePickupPoints.find(pickupPoint => pickupPoint.agent_no === agentNo);
+    if (selectedPoint) {
+      setselectedPickupPoint(selectedPoint);
+    }
   };
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "wp-block-smart-send-pickup-points"
@@ -165,20 +163,19 @@ const getPickupPoints = async (carrier, country, postalCode, city, street) => {
       jQuery('.select_ss_pickup_point').css('opacity', 0);
       return [];
     } else {
-      const resultedPickupPoints = await response.json();
-      if (Array.isArray(resultedPickupPoints)) {
-        var output = '';
-        jQuery.each(resultedPickupPoints, function (index, pickupPoint) {
-          var agentAddress = formatAgentAddress(pickupPoint);
-          output += '<option value="' + pickupPoint.agent_no + '">' + agentAddress + '</option>';
+      const pickupPoints = await response.json();
+      if (Array.isArray(pickupPoints)) {
+        let pickupOptionsHTML = '';
+        pickupPoints.forEach(pickupPoint => {
+          const agentAddress = formatAgentAddress(pickupPoint);
+          pickupOptionsHTML += `<option value="${pickupPoint.agent_no}">${agentAddress}</option>`;
         });
-        jQuery('.select_ss_pickup_point').find('select').html(output);
+        jQuery('.select_ss_pickup_point').find('select').html(pickupOptionsHTML);
         getSelectedShippingMethod();
-        return resultedPickupPoints;
       } else {
-        resultedPickupPoints = [];
-        return resultedPickupPoints;
+        return [];
       }
+      return pickupPoints;
     }
   } catch (error) {
     alert('Failed to fetch pick-up points');
@@ -219,9 +216,11 @@ const getShippingCarrier = async shipping_method => {
     alert('Failed to fetch Shipping Carrier');
   }
 };
-function formatAgentAddress(address) {
-  var pickupPointDistance = parseFloat(address.distance) >= 1 ? parseFloat(address.distance).toFixed(2) + ' km' : parseInt(parseFloat(address.distance) * 1000) + ' m';
-  return pickupPointDistance + ': ' + address.company + address.address_line1 + ' ' + address.postal_code + ' ' + address.city;
+function formatAgentAddress(pickupPoint) {
+  const distance = parseFloat(pickupPoint.distance); // Parse once and reuse
+  const formattedDistance = distance >= 1 ? distance.toFixed(2) + ' km' : Math.round(distance * 1000) + ' m'; // Renamed to reflect it's formatted
+
+  return `${formattedDistance}: ${pickupPoint.company} ${pickupPoint.address_line1} ${pickupPoint.postal_code} ${pickupPoint.city}`;
 }
 
 /***/ }),
