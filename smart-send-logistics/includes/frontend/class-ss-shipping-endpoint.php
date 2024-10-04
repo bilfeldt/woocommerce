@@ -3,7 +3,6 @@
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
-include '../../pickup-point-block/smart-send-utility-session.php';
 /**
  * Class SS_Shipping_Api_Endpoint
  *
@@ -21,7 +20,7 @@ class SS_Shipping_Api_Endpoint
 {
 
     /**
-     * @var FrontendInterface $frontend An instance of the frontend class handling agent fetching and session management.
+     * @var FrontendInterface $frontend An instance of the frontend class handling agent fetching.
      */
     protected $frontend;
 
@@ -77,7 +76,7 @@ class SS_Shipping_Api_Endpoint
             $ss_agent_options = array();
             foreach ($ss_agents as $key => $agent) {
                 $formatted_address = $this->frontend->get_formatted_address_for_endpoint($agent);
-            
+
                 $ss_agent_options[$agent->agent_no] = $formatted_address;
             }
 
@@ -115,16 +114,29 @@ class SS_Shipping_Api_Endpoint
         if (!$shipping_method_instance) {
             return new WP_REST_Response(array('message' => __('No Shipping Method found', 'smart-send-logistics')), 404);
         }
+        $shipping_carrier_info = $this->get_shipping_method_meta_data($shipping_method_instance->id, $shipping_method_id);
+        return new WP_REST_Response($shipping_carrier_info, 200);
+    }
+    
+    /**
+     * Get shipping method meta data
+     * @param string $shipping_method_instance_id Shipping method instance ID
+     * @param string $shipping_method_id Shipping method ID
+     * @return array Shipping method meta data
+     */
+    private function get_shipping_method_meta_data($shipping_method_instance_id, $shipping_method_id)
+    {
+        $shipping_method_instance = WC_Shipping_Zones::get_shipping_method($shipping_method_id);
         $options = get_option('woocommerce_' . $shipping_method_instance->id . '_' . $shipping_method_instance->instance_id . '_settings');
         $shipping_agent = $options['method'];
         $shipping_agent = explode("_", $shipping_agent);
-        $shipping_carrier_info=[
+        $shipping_carrier_info = [
             'id' => $shipping_method_id,
             'carrier' => $shipping_agent[0],
             'method' => $options['method'],
             'show_pickup_selector' => true,
             'default_first_pickup_point' => false
         ];
-        return new WP_REST_Response($shipping_carrier_info, 200);
+        return $shipping_carrier_info;
     }
 }

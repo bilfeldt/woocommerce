@@ -76,7 +76,7 @@ class Smart_Send_Extend_Store_Endpoint
 	public static function extend_checkout_schema()
 	{
 		return [
-			'selectedPickupPoint' => [
+			SS_SHIPPING_WOO_BLOCK_DATA_KEY_NAME => [
 				'description' => 'Selected shipping pick-up point',
 				'type'        => 'object',
 				'context'     => ['view', 'edit'],

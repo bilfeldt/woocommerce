@@ -2,15 +2,13 @@
 
 
 include '../includes/class-ss-shipping-wc-order.php';
-include  'smart-send-utility-session.php';
 /**
  * Class Smart_Send_Extend_Woo_Core
  *
  * Extends the WooCommerce core functionality for the Smart Send Logistics plugin.
  *
  * This class hooks into the WooCommerce Store API to extend the checkout schema and save custom
- * shipping instructions to the order metadata. It also manages session initialization for storing
- * shipping agent data.
+ * shipping instructions to the order metadata. 
  *
  * @package    SmartSendLogistics
  * @subpackage WooCommerce Integration
@@ -60,11 +58,6 @@ class Smart_Send_Extend_Woo_Core
 		];
 	}
 
-	/** * Initializes session if not already started. */
-	private function initialize_session()
-	{
-		Smart_Send_Utility_Session::initialize();
-	}
 
 	/**
 	 * Saves the pickup point to the order's metadata.
@@ -77,7 +70,7 @@ class Smart_Send_Extend_Woo_Core
 			self::ACTION_SAVE_SHIPPING_INSTRUCTIONS,
 			function (\WC_Order $order, \WP_REST_Request $request) {
 				$smart_send_request_data = $request['extensions'][SS_SHIPPING_WOO_BLOCK_NAME];
-				$pickup_point = $smart_send_request_data['selectedPickupPoint'];
+				$pickup_point = $smart_send_request_data[SS_SHIPPING_WOO_BLOCK_DATA_KEY_NAME];
 
 				// Update agent number
 				$order->update_meta_data('ss_shipping_order_agent_no', $pickup_point['agent_no']);

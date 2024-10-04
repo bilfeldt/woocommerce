@@ -59,7 +59,34 @@ if (!class_exists('SS_Shipping_Frontend')) :
         {
             return  $this->get_formatted_address($agent);
         }
+        /**
+         * function to check whether current id is smartsend shipping
+         * @param int $id
+         * @return boolean
+         */
+        private function is_smartsend_shipping_Method($id)
+        {
+            if ($id == 'smart_send_shipping') {
+                return true;
+            } else {
+                return false;
+            }
+        }
 
+        /**
+         * function to check whether current id is smartsend shipping
+         * @param int $id
+         * @return boolean
+         */
+        private function is_pickup_point_method(string $name)
+        {
+
+            if (stripos($name, 'agent') !== false) {
+                return true;
+            } else {
+                return false;
+            }
+        }
         /**
          * Display the pick-up points next to the Smart Send method
          */
@@ -90,9 +117,9 @@ if (!class_exists('SS_Shipping_Frontend')) :
 
             if (
                 $chosen_shipping &&
-                ($method_id == 'smart_send_shipping') &&
+                ($this->is_smartsend_shipping_Method($method_id)) &&
                 ($chosen_shipping == $shipping_id) &&
-                (stripos($meta_data['smart_send_shipping_method'], 'agent') !== false)
+                ($this->is_pickup_point_method($meta_data['smart_send_shipping_method']))
             ) {
 
                 if (!empty($_POST['s_country']) && !empty($_POST['s_postcode']) && !empty($_POST['s_address'])) {
@@ -177,7 +204,7 @@ if (!class_exists('SS_Shipping_Frontend')) :
 
             // Save all of the agents in sessions
             if (isset($is_rest_api) && !empty($is_rest_api) && $is_rest_api == true) {
-                 return $ss_agents;
+                return $ss_agents;
             } else {
                 WC()->session->set('ss_shipping_agents', $ss_agents);
             }
@@ -330,13 +357,13 @@ if (!class_exists('SS_Shipping_Frontend')) :
 
 
                 $formatted_address = $this->get_formatted_address($ordered_agent, -1);
-                
+
                 // Display in block instead of one line
                 $formatted_address = str_replace(',', '<br/>', $formatted_address);
 
-                if(!empty($formatted_address)){
+                if (!empty($formatted_address)) {
                     echo '<h2>' . __('Pick-up Point', 'smart-send-logistics') . '</h2>'
-                    . '<address>' . $formatted_address . '</address>';
+                        . '<address>' . $formatted_address . '</address>';
                 }
             }
         }

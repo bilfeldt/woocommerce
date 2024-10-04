@@ -58,7 +58,7 @@ class Smart_Send_Blocks_Integration implements IntegrationInterface
             'woocommerce_store_api_checkout_update_order_from_request',
             function (\WC_Order $order, \WP_REST_Request $request) {
                 $smart_send_request_data = $request['extensions'][$this->get_name()];
-                $pickup_points = $smart_send_request_data['selectedPickupPoint'];
+                $pickup_points = $smart_send_request_data[SS_SHIPPING_WOO_BLOCK_DATA_KEY_NAME];
                 $order->update_meta_data('ss_shipping_order_agent_no', $pickup_points);
                 $order->save();
             },
