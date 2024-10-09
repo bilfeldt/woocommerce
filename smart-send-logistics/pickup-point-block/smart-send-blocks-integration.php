@@ -57,6 +57,37 @@ class Smart_Send_Blocks_Integration implements IntegrationInterface
         add_action(
             'woocommerce_store_api_checkout_update_order_from_request',
             function (\WC_Order $order, \WP_REST_Request $request) {
+                /**
+                 * @var $selectedPickupPoint array{
+                 *     id: string, 
+                 *     type: string, 
+                 *     agent_no: string, 
+                 *     carrier: string, 
+                 *     distance: float, 
+                 *     company: string, 
+                 *     name_line1: ?string, 
+                 *     name_line2: ?string, 
+                 *     address_line1: string, 
+                 *     address_line2: ?string, 
+                 *     postal_code: string, 
+                 *     city: string, 
+                 *     country: string, 
+                 *     coordinates: array{
+                 *         latitude: float, 
+                 *         longitude: float
+                 *     }, 
+                 *     opening_hours: array<array{
+                 *         day: string, 
+                 *         opens: string, 
+                 *         closes: string
+                 *     }>
+                 * } 
+                 * 
+                 * note: ?string means the field can be null or a string.
+                 * Nested arrays are described using array{...} syntax.
+                 * For opening_hours, it’s an array of arrays, so it's noted as array<array{...}>
+                 */
+
                 $smart_send_request_data = $request['extensions'][$this->get_name()];
                 $pickup_points = $smart_send_request_data[SS_SHIPPING_WOO_BLOCK_DATA_KEY_NAME];
                 $order->update_meta_data('ss_shipping_order_agent_no', $pickup_points);

@@ -20,7 +20,7 @@ class SS_Shipping_Api_Endpoint
 {
 
     /**
-     * @var FrontendInterface $frontend An instance of the frontend class handling agent fetching.
+     * @var SS_Shipping_Frontend $frontend For an instance of the frontend class handling agent fetching.
      */
     protected $frontend;
 
