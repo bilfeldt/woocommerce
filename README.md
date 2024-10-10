@@ -2,24 +2,26 @@
 
 Smart Send module for WooCommerce
 
-To create a build of the plugin for WooCommerce blocks, follow these steps:
+## Development
 
-1. Ensure you have Node.js and npm installed.
-2. Navigate to the plugin's root directory.
-3. Run the following command to install the necessary dependencies:
+### Build
+
+Building the plugin assets require `Node.js` and `npm` to be installed.
+
+Start by installing the `npm` dependencies:
 
 ```bash
 npm install
 ```
 
-4. To create a production-ready build, run:
+Then build the assets using:
 
 ```bash
 npm run build
 
 ```
 
-## SVN
+### Version control - SVN
 
 Wordpress Plugin releases are managed by [SVN](https://developer.wordpress.org/plugins/wordpress-org/how-to-use-subversion/#starting-a-new-plugin) and to sync the plugin to a local folder run:
 
