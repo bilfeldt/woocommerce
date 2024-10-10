@@ -1,1 +1,0 @@
-{"version":3,"file":"./style-smart-send-block.css","mappings":";;;AAAA;EACC;AACD;;AACA;EACC;EACA;AAED,C","sources":["webpack://smart-send-logistics/./src/js/smart-send-block/style.scss"],"sourcesContent":[".smart-send-other-value input {\n\twidth: 100%;\n}\n.select_ss_pickup_point{\n\tdisplay: none;\n\topacity: 0;\n}"],"names":[],"sourceRoot":""}
