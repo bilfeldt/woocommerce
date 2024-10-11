@@ -1,7 +1,7 @@
 <?php
 
 
-include '../includes/class-ss-shipping-wc-order.php';
+include SS_SHIPPING_PLUGIN_DIR_PATH . '/includes/class-ss-shipping-wc-order.php';
 /**
  * Class Smart_Send_Extend_Woo_Core
  *

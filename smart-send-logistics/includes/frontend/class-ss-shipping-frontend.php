@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
 
 use WooCommerce\Classes\WC_Order;
 
-require_once 'class-ss-shipping-endpoint.php';
+require_once __DIR__ . '/class-ss-shipping-endpoint.php';
 
 
 /**
@@ -178,7 +178,7 @@ if (!class_exists('SS_Shipping_Frontend')) :
         {
             SS_SHIPPING_WC()->log_msg('Called "findClosestAgentByAddress" for website ' . SS_SHIPPING_WC()->get_website_url() . ' with carrier = "' . $carrier . '", country = "' . $country . '", postcode = "' . $postal_code . '", city = "' . $city . '", street = "' . $street . '"');
 
-            if (SS_SHIPPING_WC()->get_api_handle()->findClosestAgentByAddress($carrier, $country, $postal_code, $city, $street)) {
+            if (SS_SHIPPING_WC()->get_api_handle()->findClosestAgentByAddress($carrier, $country, $postal_code, $street, $city)) {
 
                 $ss_agents = SS_SHIPPING_WC()->get_api_handle()->getData();
 

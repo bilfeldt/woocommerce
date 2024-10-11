@@ -450,7 +450,7 @@ class Shipment implements \JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         $vars = get_object_vars($this);
         return $vars;
