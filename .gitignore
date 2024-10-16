@@ -1,4 +1,4 @@
-/vendor
 /.idea
+/smart-send-logistics/vendor
+/smart-send-logistics/build
 .DS_Store
-/woocommerce

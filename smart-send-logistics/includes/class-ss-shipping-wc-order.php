@@ -384,7 +384,7 @@ if (!class_exists('SS_Shipping_WC_Order')) :
          */
         protected function get_formatted_address($ss_shipping_order_agent)
         {
-
+ 
             if (empty($ss_shipping_order_agent)) {
                 return '';
             }
