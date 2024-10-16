@@ -155,8 +155,8 @@ class SS_Shipping_Api_Endpoint
         // Create an array with the shipping carrier information
         $shipping_carrier_info = [
             'id' => $shipping_method_id,                    // Shipping method ID
-            'carrier' => $shipping_agent_carrier[0],        // Carrier (e.g., 'carrier')
-            'method' => $options['method'],                 // Method (e.g., 'carrier_method')
+            'carrier' => $shipping_agent_carrier[0],        // Carrier (e.g., 'gls')
+            'method' => $options['method'],                 // Method (e.g., 'agent')
             'is_pickup' => $is_pickup,                      // Boolean indicating if it's a pickup point method
             'default_first_pickup_point' => $default_select_agent // Default selected pickup point
         ];
