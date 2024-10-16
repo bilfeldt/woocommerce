@@ -8,6 +8,8 @@ use Automattic\WooCommerce\Utilities\OrderUtil;
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use WooCommerce\Classes\WC_Order;
 
+require_once SS_SHIPPING_PLUGIN_DIR_PATH . '/includes/utility/smart-send-utility-points.php';
+
 /**
  * WooCommerce Smart Send Shipping Order.
  *
@@ -286,7 +288,7 @@ if (!class_exists('SS_Shipping_WC_Order')) :
                     $this->getOrderWeight($order)) . '</p>';
 
             // Display Agent No. field if pickup-point shipping method selected
-            if (stripos($shipping_method_type, 'agent') !== false) {
+            if (Smart_Send_Utility_Points::is_pickup_point_method($shipping_method_type)) {
                 echo '<h3>' . __('Pick-up Point', 'smart-send-logistics') . '</h3>';
                 echo '<strong>' . __('Agent No.:', 'smart-send-logistics') . $ss_shipping_order_agent_no . '</strong>';
                 echo $this->get_formatted_address($ss_shipping_order_agent);

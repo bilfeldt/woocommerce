@@ -7,6 +7,7 @@ if (!defined('ABSPATH')) {
 use WooCommerce\Classes\WC_Order;
 
 require_once __DIR__ . '/class-ss-shipping-endpoint.php';
+require_once SS_SHIPPING_PLUGIN_DIR_PATH . '/includes/utility/smart-send-utility-points.php';
 
 
 /**
@@ -54,34 +55,7 @@ if (!class_exists('SS_Shipping_Frontend')) :
         {
             return  $this->get_formatted_address($agent);
         }
-        /**
-         * function to check whether current id is smartsend shipping
-         * @param int $id
-         * @return boolean
-         */
-        private function is_smartsend_shipping_Method($id)
-        {
-            if ($id == 'smart_send_shipping') {
-                return true;
-            } else {
-                return false;
-            }
-        }
 
-        /**
-         * function to check whether current id is smartsend shipping
-         * @param int $id
-         * @return boolean
-         */
-        private function is_pickup_point_method(string $name)
-        {
-
-            if (stripos($name, 'agent') !== false) {
-                return true;
-            } else {
-                return false;
-            }
-        }
         /**
          * Display the pick-up points next to the Smart Send method
          */
@@ -112,9 +86,9 @@ if (!class_exists('SS_Shipping_Frontend')) :
 
             if (
                 $chosen_shipping &&
-                ($this->is_smartsend_shipping_Method($method_id)) &&
+                Smart_Send_Utility_Points::is_smart_send_shipping_method($method_id) &&
                 ($chosen_shipping == $shipping_id) &&
-                ($this->is_pickup_point_method($meta_data['smart_send_shipping_method']))
+                Smart_Send_Utility_Points::is_pickup_point_method($meta_data['smart_send_shipping_method'])
             ) {
 
                 if (!empty($_POST['s_country']) && !empty($_POST['s_postcode']) && !empty($_POST['s_address'])) {
