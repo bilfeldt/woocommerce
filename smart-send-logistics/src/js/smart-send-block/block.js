@@ -141,9 +141,9 @@ async function findClosestAgentByAddress(
 	postalCode = postalCode;
 	city = city;
 	street = street;
-	var carrier = await getShippingCarrier( ss_agent );
+	var shipping_method = ss_agent;
 	var defaultvalue = getPickupPoints(
-		carrier,
+		shipping_method,
 		country,
 		postalCode,
 		city,
@@ -167,14 +167,14 @@ const getPickupPoints = async (
 	city,
 	street
 ) => {
-	const url = '/wp-json/smart-send-logistics/v1/get-closest-pickup-points'; // Custom endpoint registered by this package
+	const url = '/wp-json/smart-send-logistics/v1/checkout/shipping'; // Custom endpoint registered by this package
 
 	const data = {
 		country: country,
 		postCode: postalCode,
 		city: city,
 		street: street,
-		carrier: carrier,
+		shipping_method: carrier,
 	};
 
 	try {
@@ -192,16 +192,29 @@ const getPickupPoints = async (
 			jQuery( '.select_ss_pickup_point' ).css( 'opacity', 0 );
 			return [];
 		} else {
-			const pickupPoints = await response.json();
-			if ( Array.isArray( pickupPoints ) ) {
+			const pickupPointsResults = await response.json();
+			var pickupPoints = pickupPointsResults.pickup_points;
+			if (
+				Array.isArray( pickupPoints ) &&
+				pickupPointsResults.is_pickup
+			) {
 				let pickupOptionsHTML = '';
+
 				pickupPoints.forEach( ( pickupPoint ) => {
 					const agentAddress = formatAgentAddress( pickupPoint );
 					pickupOptionsHTML += `<option value="${ pickupPoint.agent_no }">${ agentAddress }</option>`;
 				} );
-				jQuery( '.select_ss_pickup_point' )
-					.find( 'select' )
-					.html( pickupOptionsHTML );
+				if ( pickupPointsResults.default_pickup == 'no' ) {
+					jQuery( '.select_ss_pickup_point' )
+						.find( 'select' )
+						.append( pickupOptionsHTML );
+					const addpickupPoint = { 0: 'select the endpoint' };
+					pickupPoints.unshift( addpickupPoint );
+				} else {
+					jQuery( '.select_ss_pickup_point' )
+						.find( 'select' )
+						.html( pickupOptionsHTML );
+				}
 				getSelectedShippingMethod();
 			} else {
 				return [];
@@ -228,38 +241,12 @@ function getSelectedShippingMethod() {
 	}
 }
 
-const getShippingCarrier = async ( shipping_method ) => {
-	const url = '/wp-json/smart-send-logistics/v1/get-shipping-carrier'; // Custom endpoint registered by this package
+function formatAgentAddress( pickupPoint ) {
+	const distance = parseFloat( pickupPoint.distance ); // Parse once and reuse
+	const formattedDistance =
+		distance >= 1
+			? distance.toFixed( 2 ) + ' km'
+			: Math.round( distance * 1000 ) + ' m'; // Renamed to reflect it's formatted
 
-	const data = {
-		ss_method: shipping_method,
-	};
-
-	try {
-		const response = await fetch( url, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify( data ),
-		} );
-
-		if ( ! response.ok ) {
-			const errorData = await response.json();
-		} else {
-			const results = await response.json();
-			return results.carrier;
-		}
-	} catch ( error ) {
-		alert( 'Failed to fetch Shipping Carrier' );
-	}
-};
-
-function formatAgentAddress(pickupPoint) {
-	const distance = parseFloat(pickupPoint.distance); // Parse once and reuse
-	const formattedDistance = distance >= 1 
-	  ? distance.toFixed(2) + ' km' 
-	  : Math.round(distance * 1000) + ' m'; // Renamed to reflect it's formatted
-	
-	return `${formattedDistance}: ${pickupPoint.company} ${pickupPoint.address_line1} ${pickupPoint.postal_code} ${pickupPoint.city}`;
-  }
+	return `${ formattedDistance }: ${ pickupPoint.company } ${ pickupPoint.address_line1 } ${ pickupPoint.postal_code } ${ pickupPoint.city }`;
+}

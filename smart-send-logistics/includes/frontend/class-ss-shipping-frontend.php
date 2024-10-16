@@ -47,11 +47,6 @@ if (!class_exists('SS_Shipping_Frontend')) :
             new SS_Shipping_Api_Endpoint($this);
         }
 
-        /** * Initializes session if not already started. */
-        private function initialize_session()
-        {
-            Smart_Send_Utility_Session::initialize();
-        }
         /**
          * Used to access the protected method get_formatted_address to be available in the class-ss-shipping-endpoint
          */
@@ -134,8 +129,7 @@ if (!class_exists('SS_Shipping_Frontend')) :
                     echo '<div class="woocommerce-info ss-carrier-info">' . __('Carrier: ', 'smart-send-logistics') . $carrier . '</div>';
 
                     $this->carries = $carrier;
-                    $is_rest_api = false;
-                    $ss_agents = $this->handle_agents_session($carrier, $country, $postal_code, $city, $street, $is_rest_api);
+                    $ss_agents = $this->handle_agents_session($carrier, $country, $postal_code, $city, $street);
 
                     if (!empty($ss_agents)) {
                         $ss_setting = SS_SHIPPING_WC()->get_ss_shipping_settings();
@@ -197,17 +191,15 @@ if (!class_exists('SS_Shipping_Frontend')) :
          * function to fetch agents and manage the sessions
          */
 
-        public function handle_agents_session($carrier, $country, $postal_code, $city, $street, $is_rest_api)
+        public function handle_agents_session($carrier, $country, $postal_code, $city, $street)
         {
 
             $ss_agents = $this->find_closest_agents_by_address($carrier, $country, $postal_code, $city, $street);
 
             // Save all of the agents in sessions
-            if (isset($is_rest_api) && !empty($is_rest_api) && $is_rest_api == true) {
-                return $ss_agents;
-            } else {
-                WC()->session->set('ss_shipping_agents', $ss_agents);
-            }
+
+            WC()->session->set('ss_shipping_agents', $ss_agents);
+
             return $ss_agents;
         }
 
