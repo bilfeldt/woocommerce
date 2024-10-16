@@ -190,7 +190,7 @@ const getPickupPoints = async (
 			const errorData = await response.json();
 			jQuery( '.select_ss_pickup_point' ).hide();
 			jQuery( '.select_ss_pickup_point' ).css( 'opacity', 0 );
-			return [];
+			return [ { 0: 'select the endpoint' } ];
 		} else {
 			const pickupPointsResults = await response.json();
 			var pickupPoints = pickupPointsResults.pickup_points;
@@ -217,7 +217,7 @@ const getPickupPoints = async (
 				}
 				getSelectedShippingMethod();
 			} else {
-				return [];
+				return [ { 0: 'select the endpoint' } ];
 			}
 
 			return pickupPoints;

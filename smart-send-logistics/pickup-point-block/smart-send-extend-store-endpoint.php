@@ -84,7 +84,7 @@ class Smart_Send_Extend_Store_Endpoint
 				'arg_options' => [
 					'validate_callback' => function ($value) {
 						// Check if value is an array and contains the 'agent_no'
-						if (is_array($value) && isset($value['agent_no']) && !empty($value['agent_no'])) {
+						if (is_array($value)) {
 							return true; // Valid data
 						}
 						return new WP_Error('rest_invalid_param', 'Invalid selected pickup point.');

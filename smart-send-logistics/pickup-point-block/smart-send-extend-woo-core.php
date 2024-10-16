@@ -52,7 +52,7 @@ class Smart_Send_Extend_Woo_Core
 				'arg_options' => [
 					'validate_callback' => function ($value) {
 						// Check if value is an array and contains the 'agent_no'
-						if (is_array($value) && isset($value['agent_no']) && !empty($value['agent_no'])) {
+						if (is_array($value)) {
 							return true; // Valid data
 						}
 						return new WP_Error('rest_invalid_param', 'Invalid selected pickup point.');
@@ -76,14 +76,15 @@ class Smart_Send_Extend_Woo_Core
 				$smart_send_request_data = $request['extensions'][SS_SHIPPING_WOO_BLOCK_NAME];
 				$pickup_point = $smart_send_request_data[SS_SHIPPING_WOO_BLOCK_DATA_KEY_NAME];
 
-				// Update agent number
-				$order->update_meta_data('ss_shipping_order_agent_no', $pickup_point['agent_no']);
+				if (isset($pickup_point['agent_no'])) {
+					// Update agent number
+					$order->update_meta_data('ss_shipping_order_agent_no', $pickup_point['agent_no']);
 
-				$pickup_point = json_decode(json_encode($pickup_point));
+					$pickup_point = json_decode(json_encode($pickup_point));
 
-				// Update the entire pickup point object
-				$order->update_meta_data('_ss_shipping_order_agent', $pickup_point);
-
+					// Update the entire pickup point object
+					$order->update_meta_data('_ss_shipping_order_agent', $pickup_point);
+				}
 				// Save the order 
 				$order->save();
 			},
