@@ -47,18 +47,18 @@ class SS_Shipping_Api_Endpoint
         // Register the API endpoint
         register_rest_route('smart-send-logistics/v1', '/checkout/shipping', array(
             'methods' => 'POST',
-            'callback' => array($this, 'get_pickup_points_callback'),
+            'callback' => array($this, 'handle_checkout_shipping_api_request'),
             'permission_callback' => "__return_true",
         ));
     }
 
     /**
-     * Callback function for the REST API endpoint to fetch pickup points.
+     * Callback function for the REST API endpoint to handle shipping methods.
      *
      * @param WP_REST_Request $request The request object containing parameters.
      * @return WP_REST_Response Response object with pickup points or an error message.
      */
-    public function get_pickup_points_callback(WP_REST_Request $request)
+    public function handle_checkout_shipping_api_request(WP_REST_Request $request)
     {
         $country = wc_clean($request->get_param('country'));
         $postal_code = wc_clean($request->get_param('postCode'));
@@ -98,7 +98,7 @@ class SS_Shipping_Api_Endpoint
     /**
      * Get shipping method meta data
      */
-    public function get_shipping_carrier($shipping_method)
+    private function get_shipping_carrier($shipping_method)
     {
         // Get the shipping method value from the request
 
