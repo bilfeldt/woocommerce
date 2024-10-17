@@ -3,7 +3,7 @@
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
-include SS_SHIPPING_PLUGIN_DIR_PATH . '/includes/utility/smart-send-utility-points.php';
+require_once SS_SHIPPING_PLUGIN_DIR_PATH . '/includes/utility/smart-send-utility-points.php';
 
 /**
  * Class SS_Shipping_Api_Endpoint
@@ -21,19 +21,13 @@ include SS_SHIPPING_PLUGIN_DIR_PATH . '/includes/utility/smart-send-utility-poin
 class SS_Shipping_Api_Endpoint
 {
 
-    /**
-     * @var SS_Shipping_Frontend $frontend For an instance of the frontend class handling agent fetching.
-     */
-    protected $frontend;
 
     /**
      * SS_Shipping_Endpoint constructor.
      *
-     * @param SS_Shipping_Frontend $frontends An instance of a class implementing the frontend logic.
      */
-    public function __construct(SS_Shipping_Frontend $frontends)
+    public function __construct()
     {
-        $this->frontend = $frontends;
         add_action('rest_api_init', array($this, 'register_endpoints'));
     }
 
@@ -70,14 +64,8 @@ class SS_Shipping_Api_Endpoint
         $carrier = $shipping_carrier_info['carrier'];
 
         // to fetch the closest pickup points
-        $ss_agents = $this->frontend->find_closest_agents_by_address($carrier, $country, $postal_code, $city, $street);
+        $ss_agents = Smart_Send_Utility_Points::find_closest_agents_by_address($carrier, $country, $postal_code, $city, $street);
         if (!empty($ss_agents)) {
-            $ss_agent_options = array();
-            foreach ($ss_agents as $key => $agent) {
-                $formatted_address = $this->frontend->get_formatted_address_for_endpoint($agent);
-
-                $ss_agent_options[$agent->agent_no] = $formatted_address;
-            }
 
             $is_pickup = $shipping_carrier_info['is_pickup'];
             $default_pickup = $shipping_carrier_info['default_first_pickup_point'];

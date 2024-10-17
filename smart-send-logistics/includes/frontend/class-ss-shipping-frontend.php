@@ -32,7 +32,6 @@ if (!class_exists('SS_Shipping_Frontend')) :
         public function __construct()
         {
             $this->init_hooks();
-            $this->include_endpoint_class();
         }
 
         protected function init_hooks()
@@ -42,18 +41,6 @@ if (!class_exists('SS_Shipping_Frontend')) :
             add_action('woocommerce_checkout_order_processed', array($this, 'process_ss_pickup_points'), 10, 2);
             add_action('woocommerce_order_details_after_order_table', array($this, 'display_ss_shipping_agent'), 10, 2);
             add_action('woocommerce_email_after_order_table', array($this, 'display_ss_shipping_agent'), 10, 2);
-        }
-        protected function include_endpoint_class()
-        {
-            new SS_Shipping_Api_Endpoint($this);
-        }
-
-        /**
-         * Used to access the protected method get_formatted_address to be available in the class-ss-shipping-endpoint
-         */
-        public function get_formatted_address_for_endpoint(object $agent)
-        {
-            return  $this->get_formatted_address($agent);
         }
 
         /**
@@ -130,37 +117,6 @@ if (!class_exists('SS_Shipping_Frontend')) :
         }
 
 
-
-        /**
-         * Find the closest agents by address
-         *
-         * @param $carrier string | unique carrier code
-         * @param $country string | ISO3166-A2 Country code
-         * @param $postal_code string
-         * @param $city string
-         * @param $street string
-         *
-         * @return array
-         */
-        public function find_closest_agents_by_address($carrier, $country, $postal_code, $city, $street)
-        {
-            SS_SHIPPING_WC()->log_msg('Called "findClosestAgentByAddress" for website ' . SS_SHIPPING_WC()->get_website_url() . ' with carrier = "' . $carrier . '", country = "' . $country . '", postcode = "' . $postal_code . '", city = "' . $city . '", street = "' . $street . '"');
-
-            if (SS_SHIPPING_WC()->get_api_handle()->findClosestAgentByAddress($carrier, $country, $postal_code, $street, $city)) {
-
-                $ss_agents = SS_SHIPPING_WC()->get_api_handle()->getData();
-
-                SS_SHIPPING_WC()->log_msg('Response from "findClosestAgentByAddress": ' . SS_SHIPPING_WC()->get_api_handle()->getResponseBody());
-
-                return $ss_agents;
-            } else {
-                SS_SHIPPING_WC()->log_msg('Response from "findClosestAgentByAddress": ' . SS_SHIPPING_WC()->get_api_handle()->getErrorString());
-
-                return array();
-            }
-        }
-
-
         /**
          * function to fetch agents and manage the sessions
          */
@@ -168,7 +124,7 @@ if (!class_exists('SS_Shipping_Frontend')) :
         public function handle_agents_session($carrier, $country, $postal_code, $city, $street)
         {
 
-            $ss_agents = $this->find_closest_agents_by_address($carrier, $country, $postal_code, $city, $street);
+            $ss_agents = Smart_Send_Utility_Points::find_closest_agents_by_address($carrier, $country, $postal_code, $city, $street);
 
             // Save all of the agents in sessions
 

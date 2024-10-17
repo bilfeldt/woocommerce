@@ -11,13 +11,18 @@ import { debounce, join } from 'lodash';
  * Internal dependencies
  */
 import { options } from './options';
-import { countries } from './countries';
 
 export const Block = ( { checkoutExtensionData, extensions } ) => {
 	const isCalculating = useSelect( ( select ) => {
 		const store = select( 'wc/store/checkout' );
 		return store.isCalculating();
 	} );
+	const checkoutDetails = useSelect( ( select ) => {
+		var storeCart = select( 'wc/store/cart' );
+		storeCart = storeCart.getCartData();
+		return storeCart;
+	} );
+
 	const { setExtensionData } = checkoutExtensionData;
 	const debouncedSetExtensionData = useCallback(
 		debounce( ( namespace, key, value ) => {
@@ -42,17 +47,17 @@ export const Block = ( { checkoutExtensionData, extensions } ) => {
 	const [ selectedPickupPoint, setselectedPickupPoint ] =
 		useState( 'try-again' );
 	useEffect( () => {
-		var street = setValue( 'shipping-address_1' );
-		var city = setValue( 'shipping-city' );
-		var country = setValue( 'components-form-token-input-0' );
-		country = countries[ country ];
-		var postcode = setValue( 'shipping-postcode' );
-		var selected = jQuery( '.wc-block-components-shipping-rates-control' )
-			.find( 'input[type=radio]:checked' )
-			.val();
-
 		const fetchPickupPoint = async () => {
-			if ( isCalculating ) {
+			if ( ! isCalculating ) {
+				var shippingAddress = checkoutDetails.shippingAddress;
+				var shippingRatesDetails = checkoutDetails.shippingRates;
+				shippingRatesDetails = getShippingRateId( shippingRatesDetails );
+
+				var street = shippingAddress.address_1;
+				var city = shippingAddress.city;
+				var country = shippingAddress.country;
+				var postcode = shippingAddress.postcode;
+				var selected = shippingRatesDetails;
 				if ( postcode && street && city && country ) {
 					const pickupPoints = await findClosestAgentByAddress(
 						selected,
@@ -152,13 +157,6 @@ async function findClosestAgentByAddress(
 	return defaultvalue;
 }
 
-function setValue( id ) {
-	var element = document.getElementById( id );
-	if ( element ) {
-		return element.value;
-	}
-	return null;
-}
 
 const getPickupPoints = async (
 	carrier,
@@ -215,7 +213,7 @@ const getPickupPoints = async (
 						.find( 'select' )
 						.html( pickupOptionsHTML );
 				}
-				getSelectedShippingMethod();
+				getSelectedShippingMethod( carrier );
 			} else {
 				return [ { 0: 'select the endpoint' } ];
 			}
@@ -227,10 +225,8 @@ const getPickupPoints = async (
 	}
 };
 
-function getSelectedShippingMethod() {
-	var selected = jQuery( '.wc-block-components-shipping-rates-control' )
-		.find( 'input[type=radio]:checked' )
-		.val();
+function getSelectedShippingMethod( carrier ) {
+	var selected = carrier;
 	if ( selected.indexOf( 'smart_send' ) !== -1 ) {
 		jQuery( '.select_ss_pickup_point' ).show();
 		jQuery( '.select_ss_pickup_point' ).css( 'opacity', 1 );
@@ -249,4 +245,22 @@ function formatAgentAddress( pickupPoint ) {
 			: Math.round( distance * 1000 ) + ' m'; // Renamed to reflect it's formatted
 
 	return `${ formattedDistance }: ${ pickupPoint.company } ${ pickupPoint.address_line1 } ${ pickupPoint.postal_code } ${ pickupPoint.city }`;
+}
+
+function getShippingRateId( shippingRates ) {
+	var shippingRateId = 0;
+	if ( Array.isArray( shippingRates ) ) {
+		shippingRates.forEach( function ( item, index ) {
+			var itemShippingRates = item.shipping_rates;
+
+			if ( Array.isArray( itemShippingRates ) ) {
+				itemShippingRates.forEach( function ( item, index ) {
+					if ( item.selected ) {
+						shippingRateId = item.rate_id;
+					}
+				} );
+			}
+		} );
+	}
+	return shippingRateId;
 }
