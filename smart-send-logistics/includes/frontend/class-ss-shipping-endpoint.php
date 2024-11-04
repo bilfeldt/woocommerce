@@ -20,8 +20,6 @@ require_once SS_SHIPPING_PLUGIN_DIR_PATH . '/includes/utility/smart-send-utility
  */
 class SS_Shipping_Api_Endpoint
 {
-
-
     /**
      * SS_Shipping_Endpoint constructor.
      *
@@ -63,33 +61,47 @@ class SS_Shipping_Api_Endpoint
         $shipping_carrier_info = $this->get_shipping_carrier($shipping_method);
         $carrier = $shipping_carrier_info['carrier'];
 
-        // to fetch the closest pickup points
+        // Trying to get the closest pickup points
+        // Success:
+        //  - 2xx response with a list of pickup points: Show them in frontend
+        // Failure:
+        //  - 2xx response with an empty array: Show "shipping to closest pickup point" in frontned
+        //  - 4xx/5xx response: Show "shipping to closest pickup point" in frontned + backend error logging
         $ss_agents = Smart_Send_Utility_Points::find_closest_agents_by_address($carrier, $country, $postal_code, $city, $street);
-        if (!empty($ss_agents)) {
 
-            $is_pickup = $shipping_carrier_info['is_pickup'];
-            $default_pickup = $shipping_carrier_info['default_first_pickup_point'];
+        $is_pickup = $shipping_carrier_info['is_pickup'];
+        $default_pickup = $shipping_carrier_info['default_first_pickup_point'];
 
-            $resulted_array = array(
-                "id" => $shipping_method,
-                "is_pickup" => $is_pickup,
-                "default_pickup" => $default_pickup,
-                "pickup_points" => $ss_agents
-            );
+        $resulted_array = array(
+            "id" => $shipping_method,
+            "is_pickup" => $is_pickup,
+            "default_pickup" => $default_pickup,
+            "pickup_points" => $ss_agents, // sometimes an empty array
+            'is_timeslot' => true,
+            'timeslots' => [
+                ['08:00', '12:00'],
+                ['12:00', '16:00'],
+                ['16:00', '20:00'],
+            ],
+        );
 
-            return new WP_REST_Response($resulted_array, 200);
-        } else {
-            return new WP_REST_Response(array('message' => __("No pick-up points found $carrier", 'smart-send-logistics')), 404);
-        }
+        return new WP_REST_Response($resulted_array, 200);
     }
 
     /**
-     * Get shipping method meta data
+     * Get shipping method meta data.
+     *
+     * @return array{
+     *      id: string,
+     *      carrier: string|null,
+     *      method: string|null,
+     *      is_pickup: boolean,
+     *      default_first_pickup_point: boolean
+     *  }
      */
     private function get_shipping_carrier($shipping_method)
     {
         // Get the shipping method value from the request
-
         $carrier_keys = ["name", "id"];
 
         $shipping_method_parts = explode(":", $shipping_method);
@@ -103,8 +115,7 @@ class SS_Shipping_Api_Endpoint
         // Retrieve the shipping method instance by its ID
         // $shipping_method_instance = WC_Shipping_Zones::get_shipping_method($shipping_method_id);
 
-        $shipping_carrier_info = $this->get_shipping_method_meta_data($shipping_method_id);
-        return $shipping_carrier_info;
+        return $this->get_shipping_method_meta_data($shipping_method_id);
     }
 
     /**
@@ -115,7 +126,13 @@ class SS_Shipping_Api_Endpoint
      * shipping carrier, method, and whether to show  pickup points or not .
      * 
      * @param string $shipping_method_id Shipping method ID.
-     * @return array Shipping method meta data.
+     * @return array{
+     *     id: string,
+     *     carrier: string|null,
+     *     method: string|null,
+     *     is_pickup: boolean,
+     *     default_first_pickup_point: boolean
+     * }
      */
     private function get_shipping_method_meta_data($shipping_method_id)
     {
