@@ -6,6 +6,7 @@ import { SelectControl, TextareaControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { debounce, join } from 'lodash';
+import { getShippingApiData } from './requestapi.js';
 
 /**
  * Internal dependencies
@@ -47,11 +48,12 @@ export const Block = ( { checkoutExtensionData, extensions } ) => {
 	const [ selectedPickupPoint, setselectedPickupPoint ] =
 		useState( 'try-again' );
 	useEffect( () => {
-		const fetchPickupPoint = async () => {
+		const fetchShippingData = async () => {
 			if ( ! isCalculating ) {
 				var shippingAddress = checkoutDetails.shippingAddress;
 				var shippingRatesDetails = checkoutDetails.shippingRates;
-				shippingRatesDetails = getShippingRateId( shippingRatesDetails );
+				shippingRatesDetails =
+					getShippingRateId( shippingRatesDetails );
 
 				var street = shippingAddress.address_1;
 				var city = shippingAddress.city;
@@ -59,22 +61,29 @@ export const Block = ( { checkoutExtensionData, extensions } ) => {
 				var postcode = shippingAddress.postcode;
 				var selected = shippingRatesDetails;
 				if ( postcode && street && city && country ) {
-					const pickupPoints = await findClosestAgentByAddress(
+					const shippingMetaData = await getShippingApiData(
 						selected,
 						country,
 						postcode,
 						city,
 						street
 					);
-					if ( pickupPoints.length > 0 ) {
-						const pickupDefaultValue = pickupPoints[ 0 ];
-						setavailablePickupPoints( pickupPoints );
+					// for pickuppoints blocks
+					if ( shippingMetaData.pickup_points.length > 0 ) {
+						const pickupDefaultValue =
+							shippingMetaData.default_pickup == 'no'
+								? shippingMetaData.pickup_points[ 0 ]
+								: shippingMetaData.pickup_points[ 1 ];
+						setavailablePickupPoints(
+							shippingMetaData.pickup_points
+						);
 						setselectedPickupPoint( pickupDefaultValue );
+						handlePickupPoints( shippingMetaData );
 					}
 				}
 			}
 		};
-		fetchPickupPoint();
+		fetchShippingData();
 	}, [ isCalculating ] );
 
 	useEffect( () => {
@@ -134,109 +143,38 @@ export const Block = ( { checkoutExtensionData, extensions } ) => {
 	);
 };
 
-// Function to find closest agent by address
-async function findClosestAgentByAddress(
-	ss_agent,
-	country,
-	postalCode,
-	city,
-	street
-) {
-	country = country;
-	postalCode = postalCode;
-	city = city;
-	street = street;
-	var shipping_method = ss_agent;
-	var defaultvalue = getPickupPoints(
-		shipping_method,
-		country,
-		postalCode,
-		city,
-		street
-	);
-	return defaultvalue;
+function handlePickupPoints( $shippingMetaData ) {
+	let pickupOptionsHTML = '';
+	var pickupPoints = $shippingMetaData.pickup_points;
+
+	pickupPoints.forEach( ( pickupPoint ) => {
+		const agentAddress = formatAgentAddress( pickupPoint );
+		pickupOptionsHTML += `<option value="${ pickupPoint.agent_no }">${ agentAddress }</option>`;
+	} );
+	if ( $shippingMetaData.default_pickup == 'no' ) {
+		jQuery( '.select_ss_pickup_point' )
+			.find( 'select' )
+			.append( pickupOptionsHTML );
+	} else {
+		jQuery( '.select_ss_pickup_point' )
+			.find( 'select' )
+			.html( pickupOptionsHTML );
+	}
+	togglePickupPointsSelector( $shippingMetaData );
 }
 
-
-const getPickupPoints = async (
-	carrier,
-	country,
-	postalCode,
-	city,
-	street
-) => {
-	const url = '/wp-json/smart-send-logistics/v1/checkout/shipping'; // Custom endpoint registered by this package
-
-	const data = {
-		country: country,
-		postCode: postalCode,
-		city: city,
-		street: street,
-		shipping_method: carrier,
-	};
-
-	try {
-		const response = await fetch( url, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify( data ),
-		} );
-
-		if ( ! response.ok ) {
-			const errorData = await response.json();
-			jQuery( '.select_ss_pickup_point' ).hide();
-			jQuery( '.select_ss_pickup_point' ).css( 'opacity', 0 );
-			return [ { 0: 'select the endpoint' } ];
-		} else {
-			const pickupPointsResults = await response.json();
-			var pickupPoints = pickupPointsResults.pickup_points;
-			if (
-				Array.isArray( pickupPoints ) &&
-				pickupPointsResults.is_pickup
-			) {
-				let pickupOptionsHTML = '';
-
-				pickupPoints.forEach( ( pickupPoint ) => {
-					const agentAddress = formatAgentAddress( pickupPoint );
-					pickupOptionsHTML += `<option value="${ pickupPoint.agent_no }">${ agentAddress }</option>`;
-				} );
-				if ( pickupPointsResults.default_pickup == 'no' ) {
-					jQuery( '.select_ss_pickup_point' )
-						.find( 'select' )
-						.append( pickupOptionsHTML );
-					const addpickupPoint = { 0: 'select the endpoint' };
-					pickupPoints.unshift( addpickupPoint );
-				} else {
-					jQuery( '.select_ss_pickup_point' )
-						.find( 'select' )
-						.html( pickupOptionsHTML );
-				}
-				getSelectedShippingMethod( carrier );
-			} else {
-				return [ { 0: 'select the endpoint' } ];
-			}
-
-			return pickupPoints;
-		}
-	} catch ( error ) {
-		alert( 'Failed to fetch pick-up points' );
-	}
-};
-
-function getSelectedShippingMethod( carrier ) {
-	var selected = carrier;
-	if ( selected.indexOf( 'smart_send' ) !== -1 ) {
+function togglePickupPointsSelector( $shippingMetaData ) {
+	if (
+		$shippingMetaData.pickup_points.length > 1 &&
+		$shippingMetaData.is_pickup
+	) {
 		jQuery( '.select_ss_pickup_point' ).show();
 		jQuery( '.select_ss_pickup_point' ).css( 'opacity', 1 );
-		return selected;
 	} else {
 		jQuery( '.select_ss_pickup_point' ).hide();
 		jQuery( '.select_ss_pickup_point' ).css( 'opacity', 0 );
 	}
 }
-
 function formatAgentAddress( pickupPoint ) {
 	const distance = parseFloat( pickupPoint.distance ); // Parse once and reuse
 	const formattedDistance =

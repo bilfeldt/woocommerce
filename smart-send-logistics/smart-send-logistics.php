@@ -65,6 +65,13 @@ if (!class_exists('SS_Shipping_WC')) :
          */
         protected $ss_shipping_frontend = null;
 
+        /**
+         * Smart Send Frontend API
+         *
+         * @var SS_Shipping_Api_Endpoint
+         */
+        protected $ss_shipping_api_endpoint = null;
+
 
 
         /**
@@ -184,6 +191,7 @@ if (!class_exists('SS_Shipping_WC')) :
             // Auto loader class
             include_once('includes/class-ss-shipping-autoloader.php');
             include_once('includes/lib/Smartsend/Api.php');
+            include_once('includes/frontend/class-ss-shipping-endpoint.php');
         }
 
         protected function init_hooks()
@@ -206,9 +214,9 @@ if (!class_exists('SS_Shipping_WC')) :
              * Include the dependencies needed to instantiate the block.
              */
             add_action('woocommerce_blocks_loaded', function () {
-                require_once __DIR__ . '/pickup-point-block/smart-send-extend-store-endpoint.php';
-                require_once __DIR__ . '/pickup-point-block/smart-send-extend-woo-core.php';
-                require_once __DIR__ . '/pickup-point-block/smart-send-blocks-integration.php';
+                require_once __DIR__ . '/smart-send-block/smart-send-extend-store-endpoint.php';
+                require_once __DIR__ . '/smart-send-block/smart-send-extend-woo-core.php';
+                require_once __DIR__ . '/smart-send-block/smart-send-blocks-integration.php';
 
                 // Initialize our store endpoint extension when WC Blocks is loaded.
                 Smart_Send_Extend_Store_Endpoint::init();
@@ -249,6 +257,7 @@ if (!class_exists('SS_Shipping_WC')) :
             // Checks if WooCommerce 2.6 is installed.
             if (defined('WOOCOMMERCE_VERSION') && version_compare(WOOCOMMERCE_VERSION, '2.6', '>=')) {
                 $this->ss_shipping_frontend = new SS_Shipping_Frontend();
+                $this->ss_shipping_api_endpoint = new SS_Shipping_Api_Endpoint();
                 $this->ss_shipping_wc_order = new SS_Shipping_WC_Order();
                 $this->ss_shipping_wc_product = new SS_Shipping_WC_Product();
                 $this->ss_plugin_screen_updates = new SS_Plugins_Screen_Updates();

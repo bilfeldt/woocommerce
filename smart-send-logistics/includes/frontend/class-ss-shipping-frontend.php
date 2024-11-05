@@ -6,7 +6,6 @@ if (!defined('ABSPATH')) {
 
 use WooCommerce\Classes\WC_Order;
 
-require_once __DIR__ . '/class-ss-shipping-endpoint.php';
 require_once SS_SHIPPING_PLUGIN_DIR_PATH . '/includes/utility/smart-send-utility-points.php';
 
 

@@ -1,6 +1,6 @@
 {
 	"apiVersion": 3,
-	"name": "smart-send/pickup-point-block",
+	"name": "smart-send/smart-send-block",
 	"version": "2.0.0",
 	"title": "Smart Send logistics Pickup Points",
 	"category": "woocommerce",

@@ -4,7 +4,6 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 require_once SS_SHIPPING_PLUGIN_DIR_PATH . '/includes/utility/smart-send-utility-points.php';
-
 /**
  * Class SS_Shipping_Api_Endpoint
  *
