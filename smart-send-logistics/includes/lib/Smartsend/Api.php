@@ -138,7 +138,7 @@ class Api extends Client
      *
      * return array of agent objects
      */
-    public function getAgentsInArea($carrier, $country=null, $min_latitude, $max_latitude,$min_longitude, $max_longitude)
+    public function getAgentsInArea($carrier, $min_latitude, $max_latitude,$min_longitude, $max_longitude,$country=null)
     {
         if ($country) {
             $method = 'agents/carrier/'.$carrier.'/country/'.$country
@@ -181,7 +181,7 @@ class Api extends Client
      *
      * return array of agent objects
      */
-    public function findClosestAgentByAddress($carrier, $country, $postal_code, $city=null, $street)
+    public function findClosestAgentByAddress($carrier, $country, $postal_code, $street,$city=null)
     {
         $method = 'agents/closest/carrier/'.$carrier.'/country/'.$country.'/postalcode/'.$postal_code;
         if ($city) {

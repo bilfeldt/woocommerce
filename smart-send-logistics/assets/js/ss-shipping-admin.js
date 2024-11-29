@@ -2,7 +2,6 @@ jQuery(function($) {
 	function showDisplayAdvancedSettings(e) {
 	    if( $('#woocommerce_smart_send_shipping_advanced_settings_enable').is(':checked')) {
 	        $('#woocommerce_smart_send_shipping_advanced_settings_enable').closest('tr').nextAll().show();
-	        // $('.display-smart-send').show();
 
 	    } else {
 	        $('#woocommerce_smart_send_shipping_advanced_settings_enable').closest('tr').nextAll().hide();

@@ -1,0 +1,171 @@
+<?php
+
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly
+}
+require_once SS_SHIPPING_PLUGIN_DIR_PATH . '/includes/utility/smart-send-utility-points.php';
+/**
+ * Class SS_Shipping_Api_Endpoint
+ *
+ * Handles the REST API endpoints for Smart Send Logistics.
+ *
+ * This class is responsible for registering the REST API endpoints and handling
+ * requests to fetch the closest pickup points based on provided address parameters.
+ *
+ * @package    SmartSendLogistics
+ * @subpackage SS_Shipping_Endpoint
+ * @category   REST API
+ * @author     Smart Send
+ */
+class SS_Shipping_Api_Endpoint
+{
+    /**
+     * SS_Shipping_Endpoint constructor.
+     *
+     */
+    public function __construct()
+    {
+        add_action('rest_api_init', array($this, 'register_endpoints'));
+    }
+
+    /**
+     * Registers the custom REST API endpoint for fetching closest pickup points.
+     *
+     * @return void
+     */
+    public function register_endpoints()
+    {
+        // Register the API endpoint
+        register_rest_route('smart-send-logistics/v1', '/checkout/shipping', array(
+            'methods' => 'POST',
+            'callback' => array($this, 'handle_checkout_shipping_api_request'),
+            'permission_callback' => "__return_true",
+        ));
+    }
+
+    /**
+     * Callback function for the REST API endpoint to handle shipping methods.
+     *
+     * @param WP_REST_Request $request The request object containing parameters.
+     * @return WP_REST_Response Response object with pickup points or an error message.
+     */
+    public function handle_checkout_shipping_api_request(WP_REST_Request $request)
+    {
+        $country = wc_clean($request->get_param('country'));
+        $postal_code = wc_clean($request->get_param('postCode'));
+        $city = (!empty($request->get_param('city')) ? wc_clean($request->get_param('city')) : null);
+        $street = wc_clean($request->get_param('street'));
+        $shipping_method = wc_clean($request->get_param('shipping_method'));
+        // to get the shipping carrier info
+        $shipping_carrier_info = $this->get_shipping_carrier($shipping_method);
+        $carrier = $shipping_carrier_info['carrier'];
+
+        // Trying to get the closest pickup points
+        // Success:
+        //  - 2xx response with a list of pickup points: Show them in frontend
+        // Failure:
+        //  - 2xx response with an empty array: Show "shipping to closest pickup point" in frontned
+        //  - 4xx/5xx response: Show "shipping to closest pickup point" in frontned + backend error logging
+        $ss_agents = Smart_Send_Utility_Points::find_closest_agents_by_address($carrier, $country, $postal_code, $city, $street);
+
+        $is_pickup = $shipping_carrier_info['is_pickup'];
+        $default_pickup = $shipping_carrier_info['default_first_pickup_point'];
+
+        $resulted_array = array(
+            "id" => $shipping_method,
+            "is_pickup" => $is_pickup,
+            "default_pickup" => $default_pickup,
+            "pickup_points" => $ss_agents, // sometimes an empty array
+            'is_timeslot' => true,
+            'timeslots' => [
+                ['08:00', '12:00'],
+                ['12:00', '16:00'],
+                ['16:00', '20:00'],
+            ],
+        );
+
+        return new WP_REST_Response($resulted_array, 200);
+    }
+
+    /**
+     * Get shipping method meta data.
+     *
+     * @return array{
+     *      id: string,
+     *      carrier: string|null,
+     *      method: string|null,
+     *      is_pickup: boolean,
+     *      default_first_pickup_point: boolean
+     *  }
+     */
+    private function get_shipping_carrier($shipping_method)
+    {
+        // Get the shipping method value from the request
+        $carrier_keys = ["name", "id"];
+
+        $shipping_method_parts = explode(":", $shipping_method);
+
+        if (count($shipping_method_parts) > 1) {
+            // Get the second part of the shipping method which is the ID
+            $shipping_method_parts = array_combine($carrier_keys, $shipping_method_parts);
+        }
+        $shipping_method_id = $shipping_method_parts["id"];
+
+        // Retrieve the shipping method instance by its ID
+        // $shipping_method_instance = WC_Shipping_Zones::get_shipping_method($shipping_method_id);
+
+        return $this->get_shipping_method_meta_data($shipping_method_id);
+    }
+
+    /**
+     * Get shipping method meta data.
+     * 
+     * This function retrieves meta data for a specific shipping method
+     * based on the shipping method ID. It gathers details such as the
+     * shipping carrier, method, and whether to show  pickup points or not .
+     * 
+     * @param string $shipping_method_id Shipping method ID.
+     * @return array{
+     *     id: string,
+     *     carrier: string|null,
+     *     method: string|null,
+     *     is_pickup: boolean,
+     *     default_first_pickup_point: boolean
+     * }
+     */
+    private function get_shipping_method_meta_data($shipping_method_id)
+    {
+        // Get the shipping method instance based on the shipping method ID
+        $shipping_method_instance = WC_Shipping_Zones::get_shipping_method($shipping_method_id);
+
+        // Retrieve the options/settings for the specific shipping method instance
+        $options = get_option('woocommerce_' . $shipping_method_instance->id . '_' . $shipping_method_instance->instance_id . '_settings');
+
+        // Get the shipping agent method from the settings (e.g., method code like 'carrier_method')
+        $shipping_agent = $options['method'];
+
+        // Split the shipping agent method to get the carrier information (e.g., 'carrier_method' -> ['carrier', 'method'])
+        $shipping_agent_carrier = explode("_", $shipping_agent);
+
+        // Retrieve Smart Send shipping settings
+        $ss_setting = SS_SHIPPING_WC()->get_ss_shipping_settings();
+
+        // Get the default pickup point setting from Smart Send shipping settings
+        $default_select_agent = $ss_setting['default_select_agent'];
+
+        // Check if the to show the pickup points or not
+        $is_pickup = is_string($shipping_agent) ? Smart_Send_Utility_Points::is_pickup_point_method($shipping_agent) : false;
+
+        // Create an array with the shipping carrier information
+        $shipping_carrier_info = [
+            'id' => $shipping_method_id,                    // Shipping method ID
+            'carrier' => $shipping_agent_carrier[0],        // Carrier (e.g., 'gls')
+            'method' => $options['method'],                 // Method (e.g., 'agent')
+            'is_pickup' => $is_pickup,                      // Boolean indicating if it's a pickup point method
+            'default_first_pickup_point' => $default_select_agent // Default selected pickup point
+        ];
+
+        // Return the shipping carrier information array
+        return $shipping_carrier_info;
+    }
+}

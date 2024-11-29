@@ -1,0 +1,29 @@
+{
+	"name": "smart-send-logistics",
+	"version": "8.1.1",
+	"author": "Smart Send ApS",
+	"license": "GPL-2.0-or-later",
+	"main": "build/index.js",
+	"scripts": {
+		"build": "wp-scripts build",
+		"format": "wp-scripts format",
+		"lint:css": "wp-scripts lint-style",
+		"lint:js": "wp-scripts lint-js",
+		"packages-update": "wp-scripts packages-update",
+		"plugin-zip": "wp-scripts plugin-zip",
+		"start": "wp-scripts start",
+		"env": "wp-env"
+	},
+	"dependencies": {
+		"@wordpress/icons": "^10.9.0",
+		"lodash": "^4.17.21"
+	},
+	"devDependencies": {
+		"@woocommerce/dependency-extraction-webpack-plugin": "^3.0.1",
+		"@woocommerce/eslint-plugin": "^2.3.0",
+		"@wordpress/env": "^10.0.0",
+		"@wordpress/prettier-config": "^4.9.0",
+		"@wordpress/scripts": "^30.1.0",
+		"prettier": "npm:wp-prettier@^3.0.3"
+	}
+}
